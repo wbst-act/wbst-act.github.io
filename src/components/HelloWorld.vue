@@ -11,7 +11,7 @@ export default {
     list: [],
   }),
   mounted() {
-    this.$axios
+    this.$http
       .get(
         'https://spreadsheets.google.com/feeds/list/1q1h-GR3uGtvckUh7lu10VI0dxSBjBKy5dGPB9W47QSE/1/public/full?alt=json'
       )
@@ -26,7 +26,7 @@ export default {
             time: item['gsx$time']['$t'],
           })))
       )
-    this.$axios
+    this.$http
       .get(
         'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
       )
