@@ -31,6 +31,11 @@ const routes = [
       },
     ],
   },
+  {
+    path: encodeURI('/eBird記錄/:sid'),
+    name: 'eBird記錄',
+    component: () => import('@/views/eBird.vue'),
+  },
 ]
 
 const router = new VueRouter({

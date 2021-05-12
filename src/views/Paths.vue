@@ -1,7 +1,13 @@
 <template lang="pug">
 v-list( dense )
-  template(v-for="item in list")
-    v-list-item(:key="name")
+  template(v-for="item in paths" )
+    v-list-item(v-if="item.locid!=''" link :href="'https://ebird.org/hotspot/'+item.locid", target="_blank" :key="item.name")
+      v-list-item-content
+        v-list-item-title {{ item.name }}
+        v-list-item-subtitle {{ item.location }} {{ item.time}}
+      v-list-item-action
+        v-icon(color="green") {{icons.mdiBird}}
+    v-list-item(v-else :key="item.name")
       v-list-item-content
         v-list-item-title {{ item.name }}
         v-list-item-subtitle {{ item.location }} {{ item.time}}
@@ -10,9 +16,13 @@ v-list( dense )
 </template>
 
 <script>
+import { mdiBird } from '@mdi/js'
 export default {
   name: 'Paths',
-  data: () => ({ list: [] }),
+  data: () => ({
+    icons: { mdiBird },
+    paths: [],
+  }),
   async mounted() {
     await this.$http
       .get(
@@ -20,13 +30,14 @@ export default {
       )
       .then(
         ret =>
-          (this.list = ret.data.feed.entry.map(item => ({
+          (this.paths = ret.data.feed.entry.map(item => ({
             name: item['gsx$name']['$t'],
             city: item['gsx$city']['$t'],
             location: item['gsx$location']['$t'],
             loc: item['gsx$loc']['$t'],
             lat: item['gsx$lat']['$t'],
             time: item['gsx$time']['$t'],
+            locid: item['gsx$hotspotid']['$t'],
           })))
       )
   },

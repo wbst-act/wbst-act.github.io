@@ -8,14 +8,14 @@ v-container(fluid)
             template(v-slot:activator="{ on, attrs }")
               v-btn(outlined, color="gray darken-2" v-bind="attrs", v-on="on")
                 span {{ types[type] }}
-                v-icon(right) mdi-menu-down
+                v-icon(right) {{ icons.mdiMenuDown }}
             v-list
               v-list-item(v-for="( key, value) in types" :key="key" @click='type=value')
                 v-list-item-title {{ key }}
           v-btn(fab, text small color="grey darken-2" @click="prev")
-            v-icon(small) mdi-chevron-left
+            v-icon(small) {{ icons.mdiChevronLeft }}
           v-btn(fab, text, small, color="grey darken-2" @click="next")
-            v-icon(small) mdi-chevron-right
+            v-icon(small) {{ icons.mdiChevronRight }}
           v-spacer
           v-toolbar-title(v-if="$refs.calendar") {{ $refs.calendar.title }}
         v-sheet(hieght="600")
@@ -40,7 +40,7 @@ v-container(fluid)
         v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{ selectedEvent.name }}
         v-spacer
         v-btn(icon small dark @click="selectedOpen=false")
-          v-icon mdi-close        
+          v-icon {{ icons.mdiClose }}
       v-card(v-if='selectedEvent')
         v-list(dense)
           v-list-item
@@ -63,9 +63,16 @@ v-container(fluid)
 </template>
 
 <script>
+import { mdiMenuDown, mdiChevronLeft, mdiChevronRight, mdiClose } from '@mdi/js'
 export default {
   name: 'Calendar',
   data: () => ({
+    icons: {
+      mdiMenuDown,
+      mdiChevronLeft,
+      mdiChevronRight,
+      mdiClose,
+    },
     focus: '',
     types: { week: '週', month: '月' },
     type: 'week',

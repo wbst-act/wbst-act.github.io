@@ -12,12 +12,16 @@ v-container(fluid)
         v-radio( label="是" value='是' )
         v-radio( label="否" value='否' )
   v-btn(fixed, dark, fab, bottom, right, color="green", @click="save")
-    v-icon mdi-content-save
+    v-icon {{icons.mdiContentSave}}
 </template>
 <script>
+import { mdiContentSave } from '@mdi/js'
 export default {
   name: 'RealName',
   data: () => ({
+    icons: {
+      mdiContentSave,
+    },
     name: localStorage.getItem('name') ?? '',
     tel: localStorage.getItem('tel') ?? '',
     member: localStorage.getItem('member') ?? '否',

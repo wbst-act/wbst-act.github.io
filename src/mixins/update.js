@@ -8,19 +8,23 @@ export default {
     }
   },
 
-  created() {
+  async created() {
     // Listen for our custom event from the SW registration
-    document.addEventListener('swUpdated', this.updateAvailable, { once: true })
+    if (process.env.NODE_ENV === 'production') {
+      document.addEventListener('swUpdated', this.updateAvailable, {
+        once: true,
+      })
 
-    // Prevent multiple refreshes
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (this.refreshing) return
-      this.refreshing = true
-      // Here the actual reload of the page occurs
-      window.location.reload()
-      alert('更新成功!')
-      window.location.href = '/2021'
-    })
+      // Prevent multiple refreshes
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (this.refreshing) return
+        this.refreshing = true
+        // Here the actual reload of the page occurs
+        window.location.reload()
+        alert('更新成功!')
+        window.location.href = '/2021'
+      })
+    }
   },
 
   methods: {
