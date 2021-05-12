@@ -36,13 +36,17 @@ v-container(fluid)
             )
   v-dialog(v-model='selectedOpen')
     v-sheet(dense v-if='selectedEvent')
-      v-toolbar.white--text(class="light-green"  dense)
-        v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{ selectedEvent.name }}
+      v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green'"  dense)
+        v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }}
         v-spacer
         v-btn(icon small dark @click="selectedOpen=false")
           v-icon {{ icons.mdiClose }}
       v-card(v-if='selectedEvent')
         v-list(dense)
+          v-list-item
+            v-list-item-content               
+              v-list-item-title 路線
+              v-list-item-subtitle {{ selectedEvent.pathname }}
           v-list-item
             v-list-item-content               
               v-list-item-title 集合時間
@@ -55,10 +59,13 @@ v-container(fluid)
             v-list-item-content
               v-list-item-title 領隊
               v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
-        v-card-actions
+        v-card-actions(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
           v-btn(link :href='google_map' target="_blank" color="primary") Goolge地圖
           v-btn(link :href='google_calendar' target="_blank" color="orange" dark) 加到行事曆
           v-btn(link :href='google_form'  target="_blank" color="red" dark) 實名制
+          v-btn(link v-if="selectedEvent.ebird!=''" @click="goto(selectedEvent)" color="primary") 記錄
+        v-card-actions(v-if="selectedEvent.ebird!=''")
+          v-btn(link @click="goto(selectedEvent)" color="primary") 記錄
       
 </template>
 
@@ -82,7 +89,7 @@ export default {
     events: [],
     colors: [
       'teal',
-      'cyan',
+      'grey darken-1',
       'green',
       'deep-purple',
       'orange lighten-1',
@@ -168,40 +175,57 @@ export default {
       )
     },
   },
-  mounted() {
-    this.$http
-      .get(
-        'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
-      )
-      .then(ret => {
-        this.events = ret.data.feed.entry.map(item => ({
-          name: item['gsx$name']['$t'],
-          date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-          starttime: item['gsx$starttime']['$t'],
-          endtime: item['gsx$endtime']['$t'],
-          location: item['gsx$location']['$t'],
-          leader: [
-            item['gsx$p1']['$t'],
-            item['gsx$p2']['$t'],
-            item['gsx$p3']['$t'],
-            item['gsx$p4']['$t'],
-          ],
-          start:
-            item['gsx$date']['$t'].replaceAll('/', '-') +
-            'T' +
-            item['gsx$starttime']['$t'],
-          end:
-            item['gsx$date']['$t'].replaceAll('/', '-') +
-            'T' +
-            item['gsx$endtime']['$t'],
-          color: this.colors[
-            new Date(item['gsx$date']['$t']) < new Date()
-              ? 5
-              : this.$moment(new Date(item['gsx$date']['$t'])).weekday()
-          ],
-          ebird: item['gsx$ebird']['$t'],
-        }))
-      })
+  async mounted() {
+    if (this.isOnline) {
+      await this.$http
+        .get(
+          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
+        )
+        .then(ret => {
+          this.events = ret.data.feed.entry
+            .filter(item => item['gsx$type']['$t'] == '例行')
+            .map(item => ({
+              name:
+                (item['gsx$cancel']['$t'] == 'y'
+                  ? '[' + item['gsx$cancelhelp']['$t'] + '] '
+                  : '') + item['gsx$name']['$t'],
+              pathname: item['gsx$name']['$t'],
+              date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
+              starttime: item['gsx$starttime']['$t'],
+              endtime: item['gsx$endtime']['$t'],
+              location: item['gsx$location']['$t'],
+              leader: [
+                item['gsx$p1']['$t'],
+                item['gsx$p2']['$t'],
+                item['gsx$p3']['$t'],
+                item['gsx$p4']['$t'],
+              ],
+              start:
+                item['gsx$date']['$t'].replaceAll('/', '-') +
+                'T' +
+                item['gsx$starttime']['$t'],
+              end:
+                item['gsx$date']['$t'].replaceAll('/', '-') +
+                'T' +
+                item['gsx$endtime']['$t'],
+              done: new Date(item['gsx$date']['$t']) < new Date(),
+              color: this.colors[
+                new Date(item['gsx$date']['$t']) < new Date()
+                  ? 5
+                  : item['gsx$cancel']['$t'] == 'y'
+                  ? 1
+                  : this.$moment(new Date(item['gsx$date']['$t'])).weekday()
+              ],
+              ebird: item['gsx$ebird']['$t'],
+              cancel: item['gsx$cancel']['$t'],
+              cancelhelp: item['gsx$cancelhelp']['$t'],
+            }))
+        })
+      this.$offlineStorage.set('events', this.events)
+    } else {
+      this.events = this.$offlineStorage.get('events')
+    }
+
     const week = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
     this.focus = week
   },
@@ -254,6 +278,12 @@ export default {
     getDay(date) {
       const daysOfWeek = ['日', '一', '二', '三', '四', '五', '六']
       return daysOfWeek[date.weekday]
+    },
+    goto(item) {
+      this.$router.push({
+        name: 'eBird記錄',
+        params: { sid: item.ebird, date: item.date, location: item.location },
+      })
     },
   },
 }

@@ -4,9 +4,9 @@ module.exports = {
   transpileDependencies: ['vuetify'],
   pwa: {
     name: '北鳥例行',
-    themeColor: '#607D8B',
-    msTileColor: '#607D8B',
-    backgroundColor: '#000000',
+    themeColor: '#558B2F',
+    msTileColor: '#558B2F',
+    backgroundColor: '#DCEDC8',
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
     workboxOptions: {
@@ -16,7 +16,7 @@ module.exports = {
       msTileImage: 'img/icons/mstile-150x150.png',
     },
     manifestOptions: {
-      background_color: '#000000',
+      background_color: '#DCEDC8',
     },
   },
 }

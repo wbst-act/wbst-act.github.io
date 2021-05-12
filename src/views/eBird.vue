@@ -4,7 +4,12 @@ v-app
     v-app-bar-nav-icon(@click="$router.back()")
       v-icon {{ icons.mdiArrowLeft }}
     v-toolbar-title {{ date | moment('YYYY-MM-DD')}} {{ location}}
+    v-spacer
+    v-btn(dark :href="`https://ebird.org/checklist/${sid}`" icon target="_blank")
+      v-icon {{ icons.mdiBird}}
   v-main
+    v-card.mx-auto(outlined )
+      v-card-text 鳥種數: {{ record.obs.length }}
     v-list( dense )
       template(v-for="bird in record.obs")
         v-list-item( :key="bird.speciesCode" )
@@ -16,12 +21,13 @@ v-app
 </template>
 
 <script>
-import { mdiArrowLeft } from '@mdi/js'
+import { mdiArrowLeft, mdiBird } from '@mdi/js'
 export default {
   name: 'eBird',
   data: () => ({
     icons: {
       mdiArrowLeft,
+      mdiBird,
     },
     record: {},
     birds: {},
