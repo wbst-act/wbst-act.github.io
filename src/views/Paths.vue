@@ -1,42 +1,29 @@
 <template lang="pug">
-v-app
-  draw-menu(:drawer='drawer')
-  v-app-bar(app, 
-    color="light-green darken-3",
-    dark,
-    dense, 
-    :clipped-left="$vuetify.breakpoint.lgAndUp")
-    v-app-bar-nav-icon(@click.stop="drawer =! drawer")
-    v-toolbar-title 例行路線查詢
-    v-spacer
-    v-icon(v-if='isOffline') {{ icons.mdiWifiStrengthOffOutline}}
-  v-main
-    v-list( dense )
-      template(v-for="item in paths" )
-        v-list-item(v-if="item.locid!='' && isOnline" link :href="'https://ebird.org/hotspot/'+item.locid", target="_blank" :key="item.name")
-          v-list-item-content
-            v-list-item-title {{ item.name }}
-            v-list-item-subtitle {{ item.location }} {{ item.time}}
-          v-list-item-action
-            v-icon(color="green") {{icons.mdiBird}}
-        v-list-item(v-else :key="item.name")
-          v-list-item-content
-            v-list-item-title {{ item.name }}
-            v-list-item-subtitle {{ item.location }} {{ item.time}}
-        v-divider
-    
+wbst-header(title='例行路線查詢')
+  v-list( dense )
+    template(v-for="item in paths" )
+      v-list-item(v-if="item.locid!='' && isOnline" link :href="'https://ebird.org/hotspot/'+item.locid", target="_blank" :key="item.name")
+        v-list-item-content
+          v-list-item-title {{ item.name }}
+          v-list-item-subtitle {{ item.location }} {{ item.time}}
+        v-list-item-action
+          v-icon(color="green") {{icons.mdiBird}}
+      v-list-item(v-else :key="item.name")
+        v-list-item-content
+          v-list-item-title {{ item.name }}
+          v-list-item-subtitle {{ item.location }} {{ item.time}}
+      v-divider    
 </template>
 
 <script>
-import { mdiBird, mdiWifiStrengthOffOutline } from '@mdi/js'
-import DrawMenu from '@/components/DrawMenu.vue'
+import { mdiBird } from '@mdi/js'
+import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Paths',
-  components: { DrawMenu },
+  components: { WbstHeader },
   data: () => ({
-    icons: { mdiBird, mdiWifiStrengthOffOutline },
+    icons: { mdiBird },
     paths: [],
-    drawer: false,
   }),
   async mounted() {
     if (this.isOnline) {

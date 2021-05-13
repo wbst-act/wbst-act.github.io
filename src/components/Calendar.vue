@@ -36,7 +36,7 @@ v-container(fluid)
             )
   v-dialog(v-model='selectedOpen')
     v-sheet(dense v-if='selectedEvent')
-      v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green'"  dense)
+      v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
         v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }}
         v-spacer
         v-btn(icon small dark @click="selectedOpen=false")
@@ -47,30 +47,54 @@ v-container(fluid)
             v-list-item-content               
               v-list-item-title 路線
               v-list-item-subtitle {{ selectedEvent.pathname }}
-          v-list-item
-            v-list-item-content               
-              v-list-item-title 集合時間
-              v-list-item-subtitle {{ selectedEvent.starttime }}
-          v-list-item
-            v-list-item-content
-              v-list-item-title 集合地點
-              v-list-item-subtitle {{ selectedEvent.location }} 
+          template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false") 
+            v-list-item(link :href='google_calendar' target="_blank")
+              v-list-item-content               
+                v-list-item-title 集合時間
+                v-list-item-subtitle {{ selectedEvent.starttime }}
+              v-list-item-action                
+                v-icon(color="orange" dark icon ) {{ icons.mdiCalendarPlus }}
+            v-list-item(link :href='google_map' target="_blank")
+              v-list-item-content
+                v-list-item-title 集合地點
+                v-list-item-subtitle {{ selectedEvent.location }} 
+              v-list-item-action
+                v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
+          template(v-else)
+            v-list-item
+              v-list-item-content               
+                v-list-item-title 集合時間
+                v-list-item-subtitle {{ selectedEvent.starttime }}
+            v-list-item
+              v-list-item-content
+                v-list-item-title 集合地點
+                v-list-item-subtitle {{ selectedEvent.location }} 
           v-list-item
             v-list-item-content
               v-list-item-title 領隊
               v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
-        v-card-actions(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
-          v-btn(link :href='google_map' target="_blank" color="primary") Goolge地圖
-          v-btn(link :href='google_calendar' target="_blank" color="orange" dark) 加到行事曆
-          v-btn(link :href='google_form'  target="_blank" color="red" dark) 實名制
-          v-btn(link v-if="selectedEvent.ebird!=''" @click="goto(selectedEvent)" color="primary") 記錄
-        v-card-actions(v-if="selectedEvent.ebird!=''")
-          v-btn(link @click="goto(selectedEvent)" color="primary") 記錄
+        template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")       
+          v-divider
+          v-card-actions
+            v-btn(link  block :href='google_form' target="_blank" color="green" dark) 實名制簽到
+            v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
+        template(v-if="selectedEvent.ebird!=''")
+          v-divider
+          v-card-actions
+            v-spacer
+            v-btn(link block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
       
 </template>
 
 <script>
-import { mdiMenuDown, mdiChevronLeft, mdiChevronRight, mdiClose } from '@mdi/js'
+import {
+  mdiMenuDown,
+  mdiChevronLeft,
+  mdiChevronRight,
+  mdiClose,
+  mdiCalendarPlus,
+  mdiGoogleMaps,
+} from '@mdi/js'
 export default {
   name: 'Calendar',
   data: () => ({
@@ -79,6 +103,8 @@ export default {
       mdiChevronLeft,
       mdiChevronRight,
       mdiClose,
+      mdiCalendarPlus,
+      mdiGoogleMaps,
     },
     focus: '',
     types: { week: '週', month: '月' },
@@ -156,11 +182,11 @@ export default {
     google_calendar() {
       const dates =
         this.$moment(this.selectedEvent.start, 'YYYY-MM-DDTHH:mm').format(
-          'YYYYMMDDTHHmmSSZ'
+          'YYYYMMDDTHHmmSS'
         ) +
         '%2F' +
         this.$moment(this.selectedEvent.end, 'YYYY-MM-DDTHH:mm').format(
-          'YYYYMMDDTHHmmSSZ'
+          'YYYYMMDDTHHmmSS'
         )
 
       return (
@@ -208,17 +234,27 @@ export default {
                 item['gsx$date']['$t'].replaceAll('/', '-') +
                 'T' +
                 item['gsx$endtime']['$t'],
-              done: new Date(item['gsx$date']['$t']) < new Date(),
+              done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
+                this.$moment(),
+                'day'
+              ),
               color: this.colors[
-                new Date(item['gsx$date']['$t']) < new Date()
+                this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
+                  this.$moment(),
+                  'day'
+                )
                   ? 5
                   : item['gsx$cancel']['$t'] == 'y'
                   ? 1
-                  : this.$moment(new Date(item['gsx$date']['$t'])).weekday()
+                  : this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').weekday()
               ],
               ebird: item['gsx$ebird']['$t'],
               cancel: item['gsx$cancel']['$t'],
               cancelhelp: item['gsx$cancelhelp']['$t'],
+              today: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isSame(
+                this.$moment(),
+                'day'
+              ),
             }))
         })
       this.$offlineStorage.set('events', this.events)

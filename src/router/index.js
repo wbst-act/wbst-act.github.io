@@ -30,6 +30,25 @@ const routes = [
     name: 'eBird記錄',
     component: () => import('@/views/eBird.vue'),
   },
+  {
+    path: encodeURI('/排班查詢'),
+    name: '排班查詢',
+    component: () => import('@/views/Search.vue'),
+  },
+  {
+    path: encodeURI('/駐站解說'),
+    name: '駐站解說',
+    component: () => import('@/views/Station.vue'),
+  },
+  {
+    path: encodeURI('/大型活動資訊'),
+    name: '大型活動資訊',
+    component: () => import('@/views/Travel.vue'),
+  },
+  {
+    path: '*',
+    redirect: '/',
+  },
 ]
 
 const router = new VueRouter({

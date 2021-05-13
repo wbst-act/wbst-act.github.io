@@ -1,38 +1,21 @@
 <template lang="pug">
-v-app
-  draw-menu(:drawer='drawer')
-  v-app-bar(app, 
-    color="light-green darken-3",
-    dark,
-    dense, 
-    :clipped-left="$vuetify.breakpoint.lgAndUp")
-    v-app-bar-nav-icon(@click.stop="drawer =! drawer")
-    v-toolbar-title 北鳥 例行活動行事曆
-    v-spacer
-    v-icon(v-if='isOffline') {{ icons.mdiWifiStrengthOffOutline}}
-  v-main
-    calendar
-    v-snackbar(:value="updateExists" :timeout="-1" color="light-green darken-3" centered)
-      | 有新版本可以更新
-      template(v-slot:action="{ attrs }")
-        v-btn(@click="refreshApp" text dark) 更新
+wbst-header(title='北鳥 例行活動行事曆')
+  calendar
+  v-snackbar(:value="updateExists" :timeout="-1" color="light-green darken-3" centered)
+    | 有新版本可以更新
+    template(v-slot:action="{ attrs }")
+      v-btn(@click="refreshApp" text dark) 更新
 </template>
 
 <script>
-import { mdiWifiStrengthOffOutline } from '@mdi/js'
 import update from '../mixins/update'
-import DrawMenu from '@/components/DrawMenu.vue'
+import WbstHeader from '@/components/WbstHeader.vue'
 import Calendar from '@/components/Calendar.vue'
 export default {
   name: 'Home',
   mixins: [update],
-  components: { DrawMenu, Calendar },
-  data: () => ({
-    icons: {
-      mdiWifiStrengthOffOutline,
-    },
-    drawer: false,
-  }),
+  components: { WbstHeader, Calendar },
+  data: () => ({}),
   async mounted() {
     if (this.isOnline) {
       if (this.$offlineStorage.get('birds') == undefined) {
