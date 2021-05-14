@@ -1,15 +1,16 @@
 <template lang="pug">
-wbst-header(title='駐站')
+wbst-header(title='駐站解說')
   v-container
     v-card
       v-card-text 
-        .display-1 Comming soon...
+        calendar-station
 </template>
 
 <script>
 import WbstHeader from '@/components/WbstHeader.vue'
+import CalendarStation from '@/components/CalendarStation.vue'
 export default {
   name: 'Station',
-  components: { WbstHeader },
+  components: { WbstHeader, CalendarStation },
 }
 </script>

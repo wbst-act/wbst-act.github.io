@@ -3,15 +3,33 @@ wbst-header(title='歷史記錄查詢')
   v-list
     template(v-for="item in history")
       v-list-item(v-if="item.ebird!=''" link @click='goto(item)')
+        template(v-if='item.watchbirds > 0')
+          v-list-item-avatar.white--text(color='green' size='36') {{ item.watchbirds}}
+        template(v-else)
+          v-list-item-avatar(size='28')          
         v-list-item-content
-          v-list-item-title {{ item.date | moment('YYYY-MM-DD')}} 
-          v-list-item-subtitle {{ item.location }}
-        v-list-item-action          
+          v-list-item-title 
+            | {{ item.location }}
+            span.caption.float-right {{ item.leader.join(' ')}}
+          v-list-item-subtitle 
+            | {{ item.date | moment('YYYY-MM-DD')}} 
+            span.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
+          
+        v-list-item-action      
           v-icon(color='green' dark) {{ icons.mdiFormatListBulleted }}
       v-list-item(v-else)
+        template(v-if='item.watchbirds > 0')
+          v-list-item-avatar.white--text(color='green' size='36') {{ item.watchbirds}}
+        template(v-else)
+          v-list-item-avatar(size='28')
         v-list-item-content
-          v-list-item-title {{ item.date | moment('YYYY-MM-DD')}} 
-          v-list-item-subtitle {{ item.location }}
+          v-list-item-title
+            | {{ item.location }}
+            span.caption.float-right {{ item.leader.join(' ')}}
+          v-list-item-subtitle
+            | {{ item.date | moment('YYYY-MM-DD')}} 
+            span.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
+        v-list-item-action
       v-divider        
 </template>
 
@@ -35,11 +53,23 @@ export default {
         )
         .then(ret => {
           const data = ret.data.feed.entry
-            .filter(item => item['gsx$type']['$t'] == '例行')
+            .filter(
+              item =>
+                ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t']) &&
+                item['gsx$cancel']['$t'] == ''
+            )
             .map(item => ({
               location: item['gsx$name']['$t'],
               date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
+              people: item['gsx$people']['$t'],
+              watchbirds: item['gsx$watchbirds']['$t'],
               ebird: item['gsx$ebird']['$t'],
+              leader: [
+                item['gsx$p1']['$t'],
+                item['gsx$p2']['$t'],
+                item['gsx$p3']['$t'],
+                item['gsx$p4']['$t'],
+              ],
             }))
           this.history = data
             .filter(item => item.date < this.$moment())

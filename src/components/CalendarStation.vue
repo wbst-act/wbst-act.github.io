@@ -19,7 +19,7 @@ v-container(fluid)
           v-spacer
           v-toolbar-title(v-if="$refs.calendar") {{ $refs.calendar.title }}
         v-sheet(height="600")
-          v-calendar(
+          v-calendar(            
             ref="calendar",
             first-time='06:30',
             v-model="focus",
@@ -37,7 +37,7 @@ v-container(fluid)
   v-dialog(v-model='selectedOpen')
     v-sheet(dense v-if='selectedEvent')
       v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
-        v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{selectedEvent.type}} {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }}
+        v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{ selectedEvent.type}} {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }}
         v-spacer
         v-btn(icon small dark @click="selectedOpen=false")
           v-icon {{ icons.mdiClose }}
@@ -45,44 +45,16 @@ v-container(fluid)
         v-list(dense)
           v-list-item
             v-list-item-content               
-              v-list-item-title 路線
+              v-list-item-title 地點
               v-list-item-subtitle {{ selectedEvent.name }}
-          template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false") 
-            v-list-item(link :href='google_calendar' target="_blank")
-              v-list-item-content               
-                v-list-item-title 集合時間
-                v-list-item-subtitle {{ selectedEvent.starttime }}
-              v-list-item-action                
-                v-icon(color="orange" dark icon ) {{ icons.mdiCalendarPlus }}
-            v-list-item(link :href='google_map' target="_blank")
-              v-list-item-content
-                v-list-item-title 集合地點
-                v-list-item-subtitle {{ selectedEvent.location }} 
-              v-list-item-action
-                v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
-          template(v-else)
-            v-list-item
-              v-list-item-content               
-                v-list-item-title 集合時間
-                v-list-item-subtitle {{ selectedEvent.starttime }}
-            v-list-item
-              v-list-item-content
-                v-list-item-title 集合地點
-                v-list-item-subtitle {{ selectedEvent.location }} 
+          v-list-item
+            v-list-item-content               
+              v-list-item-title 時間
+              v-list-item-subtitle {{ selectedEvent.starttime }} - {{ selectedEvent.endtime }}
           v-list-item
             v-list-item-content
               v-list-item-title 領隊
               v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
-        template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")       
-          v-divider
-          v-card-actions
-            v-btn(link  block :href='google_form' target="_blank" color="green" dark) 實名制簽到
-            v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
-        template(v-if="selectedEvent.ebird!=''")
-          v-divider
-          v-card-actions
-            v-spacer
-            v-btn(link block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
       
 </template>
 
@@ -96,7 +68,7 @@ import {
   mdiGoogleMaps,
 } from '@mdi/js'
 export default {
-  name: 'Calendar',
+  name: 'CalendarStation',
   data: () => ({
     icons: {
       mdiMenuDown,
@@ -157,49 +129,6 @@ export default {
           return [1, 2, 3, 4, 5, 6, 0]
       }
     },
-    google_form() {
-      const name = localStorage.getItem('name') ?? ''
-      const tel = localStorage.getItem('tel') ?? ''
-      const member = localStorage.getItem('member') ?? '否'
-      const event =
-        this.$moment(this.selectedEvent.date, 'YYYY/M/D').format('MMDD') +
-        '@' +
-        this.selectedEvent.name
-      return (
-        'https://docs.google.com/forms/d/e/1FAIpQLSflFovOlWATa2MhTy8LaVxaq8ROcsQB3dD98zL4AwkJYB85Qw/viewform?entry.1479042466=' +
-        event +
-        '&entry.1844593536=' +
-        name +
-        '&entry.411882768=' +
-        tel +
-        '&entry.710949816=' +
-        member
-      )
-    },
-    google_map() {
-      return 'https://maps.google.com/?q=' + this.selectedEvent.location
-    },
-    google_calendar() {
-      const dates =
-        this.$moment(this.selectedEvent.start, 'YYYY-MM-DDTHH:mm').format(
-          'YYYYMMDDTHHmmSS'
-        ) +
-        '%2F' +
-        this.$moment(this.selectedEvent.end, 'YYYY-MM-DDTHH:mm').format(
-          'YYYYMMDDTHHmmSS'
-        )
-
-      return (
-        'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=' +
-        dates +
-        '&text=' +
-        this.selectedEvent.name +
-        '&location=' +
-        this.selectedEvent.location +
-        '&details=領隊:' +
-        this.selectedEvent.leader.join(' ')
-      )
-    },
   },
   async mounted() {
     if (this.isOnline) {
@@ -209,22 +138,14 @@ export default {
         )
         .then(ret => {
           this.events = ret.data.feed.entry
-            .filter(item =>
-              ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t'])
-            )
+            .filter(item => ['駐站', '賞鳥趣'].includes(item['gsx$type']['$t']))
             .map(item => ({
               type: item['gsx$type']['$t'],
               name: item['gsx$name']['$t'],
               date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
               starttime: item['gsx$starttime']['$t'],
               endtime: item['gsx$endtime']['$t'],
-              location: item['gsx$location']['$t'],
-              leader: [
-                item['gsx$p1']['$t'],
-                item['gsx$p2']['$t'],
-                item['gsx$p3']['$t'],
-                item['gsx$p4']['$t'],
-              ],
+              leader: [item['gsx$p1']['$t'], item['gsx$p2']['$t']],
               start:
                 item['gsx$date']['$t'].replaceAll('/', '-') +
                 'T' +
@@ -247,7 +168,6 @@ export default {
                   ? 1
                   : this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').weekday()
               ],
-              ebird: item['gsx$ebird']['$t'],
               cancel: item['gsx$cancel']['$t'],
               cancelhelp: item['gsx$cancelhelp']['$t'],
               today: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isSame(
@@ -256,9 +176,9 @@ export default {
               ),
             }))
         })
-      this.$offlineStorage.set('events', this.events)
+      this.$offlineStorage.set('stations', this.events)
     } else {
-      this.events = this.$offlineStorage.get('events')
+      this.events = this.$offlineStorage.get('stations')
     }
 
     const week = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
@@ -313,12 +233,6 @@ export default {
     getDay(date) {
       const daysOfWeek = ['日', '一', '二', '三', '四', '五', '六']
       return daysOfWeek[date.weekday]
-    },
-    goto(item) {
-      this.$router.push({
-        name: 'eBird記錄',
-        params: { sid: item.ebird, date: item.date, location: item.location },
-      })
     },
   },
 }
