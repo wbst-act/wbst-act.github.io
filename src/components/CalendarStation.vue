@@ -2,7 +2,8 @@
 v-container(fluid)
   v-row.fill-height
     v-col(cols="12")
-      v-sheet(hieght="64")
+      v-skeleton-loader(type="table-heading, list-item-two-line, image, table-tfoot" v-if="loading")
+      v-sheet(hieght="64" v-else)
         v-toolbar( flat )
           v-menu(bottom).mr-4
             template(v-slot:activator="{ on, attrs }")
@@ -17,7 +18,10 @@ v-container(fluid)
           v-btn(fab, text, small, color="grey darken-2" @click="next")
             v-icon(small) {{ icons.mdiChevronRight }}
           v-spacer
-          v-toolbar-title(v-if="$refs.calendar") {{ $refs.calendar.title }}
+          template(v-if="$refs.calendar")
+            v-toolbar-title {{ $refs.calendar.title }}
+          template(v-else) 
+            v-toolbar-title 本週
         v-sheet(height="600")
           v-calendar(            
             ref="calendar",
@@ -95,42 +99,13 @@ export default {
       'indigo',
     ],
     list: [],
+    weekday: [6, 0],
+    loading: true,
   }),
-  computed: {
-    weekday() {
-      const week = this.$moment(this.focus).week() - 1
-      const has4 =
-        this.events.filter(
-          item =>
-            this.$moment(item.date, 'YYYY/MM/DD').week() == week &&
-            this.$moment(item.date, 'YYYY/MM/DD').day() == 4
-        ).length > 0
-      const has6 =
-        this.events.filter(
-          item =>
-            this.$moment(item.date, 'YYYY/MM/DD').week() == week &&
-            this.$moment(item.date, 'YYYY/MM/DD').day() == 6
-        ).length > 0
 
-      switch (this.$vuetify.breakpoint.name) {
-        case 'xs':
-        case 'sm':
-        case 'md':
-          return this.type == 'month'
-            ? [4, 5, 6, 0]
-            : has4
-            ? [4, 6, 0]
-            : has6
-            ? [6, 0]
-            : [0]
-        case 'lg':
-        case 'xl':
-        default:
-          return [1, 2, 3, 4, 5, 6, 0]
-      }
-    },
-  },
   async mounted() {
+    this.loading = true
+    this.focus = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
     if (this.isOnline) {
       await this.$http
         .get(
@@ -181,8 +156,7 @@ export default {
       this.events = this.$offlineStorage.get('stations')
     }
 
-    const week = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
-    this.focus = week
+    this.loading = false
   },
   methods: {
     getEventColor(event) {

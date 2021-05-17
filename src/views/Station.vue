@@ -1,9 +1,6 @@
 <template lang="pug">
 wbst-header(title='駐站解說')
-  v-container
-    v-card
-      v-card-text 
-        calendar-station
+  calendar-station
 </template>
 
 <script>

@@ -1,6 +1,7 @@
 <template lang="pug">
 wbst-header(title='歷史記錄查詢')
-  v-list
+  v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar" v-if="loading")
+  v-list(v-else)
     template(v-for="item in history")
       v-list-item(v-if="item.ebird!=''" link @click='goto(item)')
         template(v-if='item.watchbirds > 0')
@@ -44,8 +45,10 @@ export default {
       mdiFormatListBulleted,
     },
     history: [],
+    loading: true,
   }),
   async mounted() {
+    this.loading = true
     if (this.isOnline) {
       await this.$http
         .get(
@@ -79,6 +82,7 @@ export default {
     } else {
       this.history = this.$offlineStorage.get('history')
     }
+    this.loading = false
   },
   methods: {
     goto(item) {

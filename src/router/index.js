@@ -46,6 +46,11 @@ const routes = [
     component: () => import('@/views/Travel.vue'),
   },
   {
+    path: encodeURI('/相關網站'),
+    name: '相關網站',
+    component: () => import('@/views/Site.vue'),
+  },
+  {
     path: '*',
     redirect: '/',
   },

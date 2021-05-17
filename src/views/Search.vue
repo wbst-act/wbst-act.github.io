@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title='排班查詢')
+wbst-header(title='志工排班查詢')
   v-container(fluid )
     v-card.mb-3
       v-container(fluid )

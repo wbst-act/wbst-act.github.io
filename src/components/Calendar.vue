@@ -2,7 +2,8 @@
 v-container(fluid)
   v-row.fill-height
     v-col(cols="12")
-      v-sheet(hieght="64")
+      v-skeleton-loader(type="table-heading, list-item-two-line, image, table-tfoot" v-if="loading")
+      v-sheet(hieght="64" v-else)
         v-toolbar( flat )
           v-menu(bottom).mr-4
             template(v-slot:activator="{ on, attrs }")
@@ -17,7 +18,10 @@ v-container(fluid)
           v-btn(fab, text, small, color="grey darken-2" @click="next")
             v-icon(small) {{ icons.mdiChevronRight }}
           v-spacer
-          v-toolbar-title(v-if="$refs.calendar") {{ $refs.calendar.title }}
+          template(v-if="$refs.calendar")
+            v-toolbar-title {{ $refs.calendar.title }}
+          template(v-else) 
+            v-toolbar-title 本週
         v-sheet(height="600")
           v-calendar(
             ref="calendar",
@@ -43,10 +47,18 @@ v-container(fluid)
           v-icon {{ icons.mdiClose }}
       v-card(v-if='selectedEvent')
         v-list(dense)
-          v-list-item
-            v-list-item-content               
-              v-list-item-title 路線
-              v-list-item-subtitle {{ selectedEvent.name }}
+          template(v-if='ebird_hotspot==""')
+            v-list-item
+              v-list-item-content               
+                v-list-item-title 路線
+                v-list-item-subtitle {{ selectedEvent.name }}
+          template(v-else)
+            v-list-item(link :href='ebird_hotspot' target="_blank")
+              v-list-item-content               
+                v-list-item-title 路線
+                v-list-item-subtitle {{ selectedEvent.name }}
+              v-list-item-action
+                v-icon(color="green" icon ) {{icons.mdiBird }}              
           template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false") 
             v-list-item(link :href='google_calendar' target="_blank")
               v-list-item-content               
@@ -94,6 +106,7 @@ import {
   mdiClose,
   mdiCalendarPlus,
   mdiGoogleMaps,
+  mdiBird,
 } from '@mdi/js'
 export default {
   name: 'Calendar',
@@ -105,6 +118,7 @@ export default {
       mdiClose,
       mdiCalendarPlus,
       mdiGoogleMaps,
+      mdiBird,
     },
     focus: '',
     types: { week: '週', month: '月' },
@@ -123,6 +137,8 @@ export default {
       'indigo',
     ],
     list: [],
+    loading: true,
+    paths: [],
   }),
   computed: {
     weekday() {
@@ -200,8 +216,16 @@ export default {
         this.selectedEvent.leader.join(' ')
       )
     },
+    ebird_hotspot() {
+      const locid = this.paths.find(
+        item => item.name == this.selectedEvent.name
+      )['locid']
+      return locid ? 'https://ebird.org/hotspot/' + locid : ''
+    },
   },
   async mounted() {
+    this.loading = true
+    this.focus = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
     if (this.isOnline) {
       await this.$http
         .get(
@@ -260,9 +284,9 @@ export default {
     } else {
       this.events = this.$offlineStorage.get('events')
     }
+    this.paths = this.$offlineStorage.get('paths')
 
-    const week = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
-    this.focus = week
+    this.loading = false
   },
   methods: {
     getEventColor(event) {

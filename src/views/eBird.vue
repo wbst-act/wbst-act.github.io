@@ -10,16 +10,23 @@ v-app(v-if="record")
   v-main
     template(v-if="loading" )
       v-progress-linear(color='green' indeterminate rounded height="6")
+      v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar" v-if="loading")
     template(v-else)
-      v-card.mx-auto(outlined v-if="record.obs")
-        v-card-text 鳥種數: {{ record.obs.length }}
+      v-list(dense)
+        v-list-item
+          v-list-item-content
+            v-list-item-title 
+              span.float-right 共{{ getfamily }}科 {{ record.length }}種
       v-list( dense )
-        template(v-for="bird in record.obs")
+        v-divider
+        template(v-for="bird, index in record")
           v-list-item( :key="bird.speciesCode" )
             v-list-item-avatar
               | {{ bird.howManyStr}}
             v-list-item-content
-              v-list-item-title {{ birds[bird.speciesCode] }}
+              v-list-item-title 
+                | {{ birds[bird.speciesCode].name }}
+                span.float-right.caption(v-if="index==0 || (index-1 >= 0  && birds[record[index-1].speciesCode].family != birds[bird.speciesCode].family)") {{ birds[bird.speciesCode].family }}
           v-divider
 </template>
 
@@ -32,7 +39,7 @@ export default {
       mdiArrowLeft,
       mdiBird,
     },
-    record: {},
+    record: null,
     birds: {},
     sid: '',
     date: '',
@@ -41,13 +48,21 @@ export default {
   }),
   created() {
     this.sid = this.$route.params.sid ?? ''
-    this.date = this.$route.params.date ?? ''
-    this.location = this.$route.params.location ?? ''
-    if (this.sid == '' || this.date == '' || this.location == '') {
-      this.$router.push('/')
-    }
-
     this.birds = this.$offlineStorage.get('birds')
+    if (this.sid == '') {
+      this.$route.push('/')
+    }
+  },
+  computed: {
+    getfamily() {
+      const family = []
+      this.record.forEach(item => {
+        if (family.indexOf(this.birds[item.speciesCode].family) == -1) {
+          family.push(this.birds[item.speciesCode].family)
+        }
+      })
+      return family.length
+    },
   },
   mounted() {
     this.eBird(this.sid)
@@ -58,9 +73,20 @@ export default {
         .get(`https://api.ebird.org/v2/product/checklist/view/${sid}`, {
           headers: { 'X-eBirdApiToken': '23abgao7v09b' },
         })
-        .then(ret => {
+        .then(async ret => {
           this.loading = false
-          this.record = ret.data
+          this.date = this.$moment(ret.data.creationDt, 'YYYY-MM-DD HH:SS')
+          this.location = await this.HotspotName(ret.data.locId)
+          this.record = ret.data.obs
+        })
+    },
+    async HotspotName(locId) {
+      return await this.$http
+        .get(`https://api.ebird.org/v2/ref/hotspot/info/${locId}`, {
+          headers: { 'X-eBirdApiToken': '23abgao7v09b' },
+        })
+        .then(ret => {
+          return ret.data.name
         })
     },
   },
