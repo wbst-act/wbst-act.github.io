@@ -29,6 +29,11 @@ v-app
           v-icon {{icons.mdiTrainCarPassenger}}
         v-list-item-content
           v-list-item-title 大型活動資訊
+      v-list-item(:to="{name: '關渡自然公園即時鳥況'}")
+        v-list-item-avatar(size="24")
+          v-icon {{icons.mdiPineTree}}
+        v-list-item-content
+          v-list-item-title 關渡自然公園即時鳥況
       v-divider
       v-list-item(:to="{name: '排班查詢'}")
         v-list-item-avatar(size="24")
@@ -98,6 +103,7 @@ import {
   mdiSitemap,
   mdiShareVariant,
   mdiHeart,
+  mdiPineTree,
 } from '@mdi/js'
 
 export default {
@@ -117,6 +123,7 @@ export default {
       mdiSitemap,
       mdiShareVariant,
       mdiHeart,
+      mdiPineTree,
     },
     drawer: false,
     builddate: '',

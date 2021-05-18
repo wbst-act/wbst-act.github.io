@@ -89,7 +89,7 @@ export default {
       if (this.isOnline) {
         this.$router.push({
           name: 'eBird記錄',
-          params: { sid: item.ebird, date: item.date, location: item.location },
+          params: { sid: item.ebird },
         })
       }
     },

@@ -61,6 +61,11 @@ const routes = [
     component: () => import('@/views/Einvoice.vue'),
   },
   {
+    path: encodeURI('/關渡自然公園即時鳥況'),
+    name: '關渡自然公園即時鳥況',
+    component: () => import('@/views/Guandu.vue'),
+  },
+  {
     path: '*',
     redirect: '/',
   },
