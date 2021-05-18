@@ -25,7 +25,7 @@ idx={
   'k2': 20+offset,
   'k3': 21+offset,
   'k4': 22+offset,
-  'c1': 19+offset
+  'c1': 25+offset
 }
 
 
@@ -102,7 +102,7 @@ def excel2csv(excelfile, csvfile):
     # 芝山
     if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['c1']]) and type(df.iat[i, idx['c1']]) != int :
         tmpdate = (df.iat[i, idx['date']]+pd.DateOffset(years=years))
-        #print(i, df.iat[i, idx['date']],  df.iat[i, idx['c1']] )
+        print(i, df.iat[i, idx['date']],  df.iat[i, idx['c1']] )
         data.append({
             'date': tmpdate.strftime('%Y/%m/%d'),
             'type': '駐站',

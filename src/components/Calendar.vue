@@ -41,7 +41,7 @@ v-container(fluid)
   v-dialog(v-model='selectedOpen')
     v-sheet(dense v-if='selectedEvent')
       v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
-        v-toolbar-title {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{selectedEvent.type}} {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }}
+        v-toolbar-title {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }} {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{selectedEvent.type}} 
         v-spacer
         v-btn(icon small dark @click="selectedOpen=false")
           v-icon {{ icons.mdiClose }}
@@ -87,10 +87,21 @@ v-container(fluid)
             v-list-item-content
               v-list-item-title 領隊
               v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
-        template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")       
+        //template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")
+        template(v-if="selectedEvent.done==false")
           v-divider
           v-card-actions
-            v-btn(link  block :href='google_form' target="_blank" color="green" dark) 實名制簽到
+            template(v-if="users.length==0")
+              v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) 實名制簽到
+            template(v-else-if="users.length==1")
+              v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) 實名制簽到
+            template(v-else)
+              v-menu(offset-y)
+                template(v-slot:activator="{ on, attrs }")
+                  v-btn(link  block color="green" dark v-bind="attrs" v-on="on") 實名制簽到
+                v-list
+                  v-list-item(v-for="user in users" :key="user.name" link :href="google_form(user.name, user.tel, user.member)" target="_blank")
+                    v-list-item-title {{ user.name }}
             v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
         template(v-if="selectedEvent.ebird!=''")
           v-divider
@@ -141,6 +152,7 @@ export default {
     list: [],
     loading: true,
     paths: [],
+    users: [],
   }),
   computed: {
     weekday() {
@@ -175,25 +187,7 @@ export default {
           return [1, 2, 3, 4, 5, 6, 0]
       }
     },
-    google_form() {
-      const name = localStorage.getItem('name') ?? ''
-      const tel = localStorage.getItem('tel') ?? ''
-      const member = localStorage.getItem('member') ?? '否'
-      const event =
-        this.$moment(this.selectedEvent.date, 'YYYY/M/D').format('MMDD') +
-        '@' +
-        this.selectedEvent.name
-      return (
-        'https://docs.google.com/forms/d/e/1FAIpQLSflFovOlWATa2MhTy8LaVxaq8ROcsQB3dD98zL4AwkJYB85Qw/viewform?entry.1479042466=' +
-        event +
-        '&entry.1844593536=' +
-        name +
-        '&entry.411882768=' +
-        tel +
-        '&entry.710949816=' +
-        member
-      )
-    },
+
     google_map() {
       return 'https://maps.google.com/?q=' + this.selectedEvent.location
     },
@@ -232,6 +226,7 @@ export default {
   },
   async mounted() {
     this.loading = true
+    this.users = this.$offlineStorage.get('users')
     this.focus = this.$moment(new Date()).day(7).format('YYYY-MM-DD')
     if (this.isOnline) {
       await this.$http
@@ -297,6 +292,22 @@ export default {
     this.loading = false
   },
   methods: {
+    google_form(name, tel, member) {
+      const event =
+        this.$moment(this.selectedEvent.date, 'YYYY/M/D').format('MMDD') +
+        '@' +
+        this.selectedEvent.name
+      return (
+        'https://docs.google.com/forms/d/e/1FAIpQLSflFovOlWATa2MhTy8LaVxaq8ROcsQB3dD98zL4AwkJYB85Qw/viewform?entry.1479042466=' +
+        event +
+        '&entry.1844593536=' +
+        name +
+        '&entry.411882768=' +
+        tel +
+        '&entry.710949816=' +
+        member
+      )
+    },
     getEventColor(event) {
       return event.color
     },

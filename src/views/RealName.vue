@@ -1,42 +1,99 @@
 <template lang="pug">
 wbst-header(title='實名制個資設定')
-  v-container    
-    v-card
-      v-container(fluid)
-        v-row 
-          v-col
-            v-text-field(label='姓名' v-model='name' dense)
-        v-row 
-          v-col
-            v-text-field(label='電話號碼(手機/市話皆可)' v-model='tel' dense)
-        v-row 
-          v-col
-            v-radio-group(v-model='member' row, label='是否為台北鳥會會員？' dense)
+  v-list
+    template(v-for="item, index in users")
+      v-list-item(:key="item.name" @click="edituser(index, item)")
+        v-list-item-action
+          v-icon(color="green") {{ icons.mdiPencil }}
+        v-list-item-content
+          v-list-item-title {{ item.name }}
+        
+      v-divider
+    v-alert.ma-5(border="top" colored-border type="info" elevation="2") 
+      | 設定後,下次執行實名制簽到會自動帶入個人資料。
+      | 家庭成員也可以設定多組資料。
+  v-dialog(v-model='dialog')
+    template(v-slot:activator="{on, attrs}")
+      v-btn(fixed, dark, fab, bottom, right, color="green" @click="adduser")
+        v-icon {{icons.mdiPlus}}
+    v-card(dense)
+      v-card
+        v-toolbar.white--text(class="light-green darken-3"  dense)
+          v-toolbar-title 實名制個資設定
+          v-spacer
+          v-btn(v-if="userid!=-1" @click="del()" icon dark)
+            v-icon {{ icons.mdiDelete }}
+        v-list
+          v-list-item          
+            v-text-field(label='姓名' v-model='user.name' dense)
+          v-list-item          
+            v-text-field(label='電話號碼(手機/市話皆可)' v-model='user.tel' dense)
+          v-list-item          
+            v-radio-group(v-model='user.member' row, label='是否為台北鳥會會員？' dense)
               v-radio( label="是" value='是' )
               v-radio( label="否" value='否' )
-    v-alert.mt-5(border="top" colored-border type="info" elevation="2") 設定後,下次執行實名制簽到會自動帶入個人資料
-  v-btn(fixed, dark, fab, bottom, right, color="green", @click="save")
-    v-icon {{icons.mdiContentSave}}
+        v-divider
+        v-card-actions
+          v-btn( @click="dialog=false" text color="red") 取消
+          v-spacer
+          v-btn( @click="save" text color="success" ) 存檔
 </template>
 <script>
-import { mdiContentSave } from '@mdi/js'
+import { mdiDelete, mdiPlus, mdiPencil } from '@mdi/js'
 import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'RealName',
   components: { WbstHeader },
   data: () => ({
     icons: {
-      mdiContentSave,
+      mdiDelete,
+      mdiPlus,
+      mdiPencil,
     },
-    name: localStorage.getItem('name') ?? '',
-    tel: localStorage.getItem('tel') ?? '',
-    member: localStorage.getItem('member') ?? '否',
+    dialog: false,
+    users: [],
+    user: {
+      name: '',
+      member: '否',
+      tel: '',
+    },
+    userid: -1,
   }),
+  mounted() {
+    this.users = this.$offlineStorage.get('users') ?? []
+  },
   methods: {
+    adduser() {
+      this.user = {
+        name: '',
+        member: '否',
+        tel: '',
+      }
+      this.dialog = true
+      this.userid = -1
+    },
+    edituser(index, user) {
+      this.userid = index
+      this.user = Object.assign({}, user)
+      this.dialog = true
+    },
     save() {
-      localStorage.setItem('name', this.name)
-      localStorage.setItem('tel', this.tel)
-      localStorage.setItem('member', this.member)
+      if (this.userid == -1) {
+        this.$set(this.users, this.users.length, this.user)
+      } else {
+        this.users[this.userid] = {
+          name: this.user.name,
+          tel: this.user.tel,
+          member: this.user.member,
+        }
+      }
+      this.$offlineStorage.set('users', this.users)
+      this.dialog = false
+    },
+    del() {
+      this.users.splice(this.userid, 1)
+      this.$offlineStorage.set('users', this.users)
+      this.dialog = false
     },
   },
 }

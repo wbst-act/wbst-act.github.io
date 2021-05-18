@@ -51,6 +51,16 @@ const routes = [
     component: () => import('@/views/Site.vue'),
   },
   {
+    path: encodeURI('/分享'),
+    name: '分享',
+    component: () => import('@/views/Share.vue'),
+  },
+  {
+    path: encodeURI('/電子發票捐贈碼'),
+    name: '電子發票捐贈碼',
+    component: () => import('@/views/Einvoice.vue'),
+  },
+  {
     path: '*',
     redirect: '/',
   },

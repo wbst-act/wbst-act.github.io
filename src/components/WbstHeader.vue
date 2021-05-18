@@ -35,23 +35,28 @@ v-app
           v-icon {{icons.mdiTableSearch}}
         v-list-item-content
           v-list-item-title 志工排班查詢
-      v-divider
-      v-list-item(:to="{name: '相關網站'}")
-        v-list-item-avatar(size="24")            
-          v-icon {{icons.mdiSitemap}}
-        v-list-item-content
-          v-list-item-title 相關網站
-      v-divider
+      v-divider      
       v-list-item(:to="{name: '實名制'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiAccountCircle}}
         v-list-item-content
           v-list-item-title 實名制個資設定
-      v-list-item(v-if="isShare" @click='share')
+      v-divider
+      v-list-item(:to="{name: '分享'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiShareVariant}}
         v-list-item-content
           v-list-item-title 分享APP
+      v-list-item(:to="{name: '電子發票捐贈碼'}")
+        v-list-item-avatar(size="24")
+          v-icon {{icons.mdiHeart}}
+        v-list-item-content
+          v-list-item-title 電子發票捐贈碼
+      v-list-item(:to="{name: '相關網站'}")
+        v-list-item-avatar(size="24")            
+          v-icon {{icons.mdiSitemap}}
+        v-list-item-content
+          v-list-item-title 相關網站
       v-divider
       v-list-item
         v-list-item-avatar(size="24")
@@ -92,6 +97,7 @@ import {
   mdiClockOutline,
   mdiSitemap,
   mdiShareVariant,
+  mdiHeart,
 } from '@mdi/js'
 
 export default {
@@ -110,6 +116,7 @@ export default {
       mdiClockOutline,
       mdiSitemap,
       mdiShareVariant,
+      mdiHeart,
     },
     drawer: false,
     builddate: '',
@@ -140,15 +147,6 @@ export default {
     ).format('YYYY-MM-DD HH:mm')
   },
   methods: {
-    share() {
-      if (navigator.share) {
-        navigator.share({
-          title: '北鳥例行APP',
-          text: '分享北鳥例行 APP',
-          url: 'https://wbst-act.github.io/2021/',
-        })
-      }
-    },
     async dismiss() {
       this.$cookies.set('add-to-home-screen', '15d')
       this.installed = false
