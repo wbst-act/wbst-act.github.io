@@ -1,17 +1,19 @@
 <template lang="pug">
-v-app(v-if="record")
-  v-app-bar(app, color="light-green darken-3", dark, dense, :clipped="$vuetify.breakpoint.lgAndUp")
-    v-app-bar-nav-icon(@click="$router.back()")
-      v-icon {{ icons.mdiArrowLeft }}
-    v-toolbar-title {{ date | moment('YYYY-MM-DD')}} {{ location}}
-    v-spacer
-    v-btn(dark :href="`https://ebird.org/checklist/${sid}`" icon target="_blank")
-      v-icon {{ icons.mdiBird}}
-  v-main
-    template(v-if="loading" )
+v-app 
+  template(v-if="loading")
+    v-app-bar(app, color="light-green darken-3", dark, dense)
+    v-main
       v-progress-linear(color='green' indeterminate rounded height="6")
-      v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar" v-if="loading")
-    template(v-else)
+      v-skeleton-loader(type="list-item, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
+  template(v-else)
+    v-app-bar(app, color="light-green darken-3", dark, dense, :clipped="$vuetify.breakpoint.lgAndUp")
+      v-app-bar-nav-icon(@click="$router.back()")
+        v-icon {{ icons.mdiArrowLeft }}
+      v-toolbar-title {{ date | moment('YYYY-MM-DD')}} {{ location}}
+      v-spacer
+      v-btn(dark :href="`https://ebird.org/checklist/${sid}`" icon target="_blank")
+        v-icon {{ icons.mdiBird}}
+    v-main
       v-list(dense)
         v-list-item
           v-list-item-content
@@ -64,8 +66,10 @@ export default {
       return family.length
     },
   },
-  mounted() {
-    this.eBird(this.sid)
+  async mounted() {
+    this.loading = true
+    await this.eBird(this.sid)
+    this.loading = false
   },
   methods: {
     async eBird(sid) {
@@ -74,7 +78,6 @@ export default {
           headers: { 'X-eBirdApiToken': '23abgao7v09b' },
         })
         .then(async ret => {
-          this.loading = false
           this.date = this.$moment(ret.data.creationDt, 'YYYY-MM-DD HH:SS')
           this.location = await this.HotspotName(ret.data.locId)
           this.record = ret.data.obs

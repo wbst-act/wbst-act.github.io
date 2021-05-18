@@ -1,6 +1,6 @@
 <template lang="pug">
 wbst-header(title='歷史記錄查詢')
-  v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar" v-if="loading")
+  v-skeleton-loader(type="list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line" v-if="loading")
   v-list(v-else)
     template(v-for="item in history")
       v-list-item(v-if="item.ebird!=''" link @click='goto(item)')

@@ -70,6 +70,7 @@ v-container(fluid)
               v-list-item-content
                 v-list-item-title 集合地點
                 v-list-item-subtitle {{ selectedEvent.location }} 
+                v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }} 
               v-list-item-action
                 v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
           template(v-else)
@@ -81,6 +82,7 @@ v-container(fluid)
               v-list-item-content
                 v-list-item-title 集合地點
                 v-list-item-subtitle {{ selectedEvent.location }} 
+                v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }} 
           v-list-item
             v-list-item-content
               v-list-item-title 領隊
@@ -217,10 +219,15 @@ export default {
       )
     },
     ebird_hotspot() {
+      const month = this.selectedEvent.date.month() + 1
       const locid = this.paths.find(
         item => item.name == this.selectedEvent.name
-      )['locid']
-      return locid ? 'https://ebird.org/hotspot/' + locid : ''
+      )
+        ? this.paths.find(item => item.name == this.selectedEvent.name)['locid']
+        : ''
+      return locid
+        ? `https://ebird.org/hotspot/${locid}?m=${month}&yr=all&changeDate=`
+        : ''
     },
   },
   async mounted() {
@@ -271,6 +278,7 @@ export default {
                   ? 1
                   : this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').weekday()
               ],
+              bus: item['gsx$bus']['$t'],
               ebird: item['gsx$ebird']['$t'],
               cancel: item['gsx$cancel']['$t'],
               cancelhelp: item['gsx$cancelhelp']['$t'],

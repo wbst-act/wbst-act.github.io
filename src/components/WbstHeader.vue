@@ -47,6 +47,11 @@ v-app
           v-icon {{icons.mdiAccountCircle}}
         v-list-item-content
           v-list-item-title 實名制個資設定
+      v-list-item(v-if="isShare" @click='share')
+        v-list-item-avatar(size="24")
+          v-icon {{icons.mdiShareVariant}}
+        v-list-item-content
+          v-list-item-title 分享APP
       v-divider
       v-list-item
         v-list-item-avatar(size="24")
@@ -64,8 +69,14 @@ v-app
     v-toolbar-title {{ title }}
     v-spacer
     v-icon(v-if='isOffline') {{ icons.mdiWifiStrengthOffOutline}}
+  
   v-main  
     slot
+  v-snackbar(v-model="installed" color="light-green darken-3" top timeout='15000')
+      | 安裝至桌面,隨時可以查詢
+      template(v-slot:action="{ attrs }")
+        v-btn( @click="dismiss" text) 取消
+        v-btn( @click="install" text) 安裝    
 </template>
 
 <script>
@@ -80,6 +91,7 @@ import {
   mdiTableSearch,
   mdiClockOutline,
   mdiSitemap,
+  mdiShareVariant,
 } from '@mdi/js'
 
 export default {
@@ -97,14 +109,54 @@ export default {
       mdiTableSearch,
       mdiClockOutline,
       mdiSitemap,
+      mdiShareVariant,
     },
     drawer: false,
     builddate: '',
+    deferredPrompt: null,
+    installed: false,
   }),
+  computed: {
+    isShare() {
+      return navigator.share
+    },
+  },
+  created() {
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault()
+      if (this.$cookies.get('add-to-home-screen') == undefined) {
+        this.installed = true
+        this.deferredPrompt = e
+      }
+    })
+    window.addEventListener('appinstalled', () => {
+      this.installed = false
+      this.deferredPrompt = null
+    })
+  },
   mounted() {
     this.builddate = this.$moment(
       new Date(parseInt(document.documentElement.dataset.buildTimestamp))
     ).format('YYYY-MM-DD HH:mm')
+  },
+  methods: {
+    share() {
+      if (navigator.share) {
+        navigator.share({
+          title: '北鳥例行APP',
+          text: '分享北鳥例行 APP',
+          url: 'https://wbst-act.github.io/2021/',
+        })
+      }
+    },
+    async dismiss() {
+      this.$cookies.set('add-to-home-screen', '15d')
+      this.installed = false
+      this.deferredPrompt = null
+    },
+    async install() {
+      this.deferredPrompt.prompt()
+    },
   },
 }
 </script>

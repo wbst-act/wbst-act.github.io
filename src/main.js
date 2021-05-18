@@ -9,12 +9,15 @@ import vuetify from './plugins/vuetify'
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 import VueOffline from 'vue-offline'
+import VueCookies from 'vue-cookies'
+
 
 require('moment/locale/zh-tw')
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 Vue.use(VueOffline)
+Vue.use(VueCookies)
 Vue.use(VueMoment, {
   moment,
 })
