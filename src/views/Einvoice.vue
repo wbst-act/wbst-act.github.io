@@ -1,26 +1,22 @@
 <template lang="pug">
-v-app 
-  v-app-bar(app, color="light-green darken-3", dark, dense, :clipped="$vuetify.breakpoint.lgAndUp")
-    v-app-bar-nav-icon(@click="$router.back()")
-      v-icon {{ icons.mdiArrowLeft }}
-    v-toolbar-title 電子發票捐贈碼
-  v-main
-    v-container
-      .d-flex.flex-column.justify-space-between.align-center.mt-10
-        v-card(width="400")
-          v-card-text
-            v-img(src="@/assets/1973999.png" max-height="400" max-width="400" centered)
-            span.d-flex.flex-column.justify-space-between.align-center 出示條碼或告知鳥會捐贈碼1973999
+wbst-header(title="電子發票捐贈碼")
+  v-container
+    .d-flex.flex-column.justify-space-between.align-center.mt-10
+      v-card(width="400")
+        v-card-text
+          v-img(src="@/assets/1973999.png" max-height="400" max-width="400" centered)
+          span.d-flex.flex-column.justify-space-between.align-center 出示條碼或告知鳥會捐贈碼1973999
 </template>
 
 <script>
 import { mdiArrowLeft } from '@mdi/js'
-
+import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Share',
   data: () => ({
     icons: { mdiArrowLeft },
   }),
+  components: { WbstHeader },
   computed: {
     isShare() {
       return navigator.share ?? false

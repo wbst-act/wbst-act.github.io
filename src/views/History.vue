@@ -1,5 +1,7 @@
 <template lang="pug">
 wbst-header(title='歷史記錄查詢')
+  v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
+    | 例行活動結束,記錄員如果會使用eBird,請分享記錄給"wbst act",加速資料更新。
   v-skeleton-loader(type="list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line" v-if="loading")
   v-list(v-else)
     template(v-for="item in history")

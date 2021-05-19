@@ -79,14 +79,23 @@ v-app
     v-toolbar-title {{ title }}
     v-spacer
     v-icon(v-if='isOffline') {{ icons.mdiWifiStrengthOffOutline}}
-  
+    slot(name='toolbar')
   v-main  
     slot
   v-snackbar(v-model="installed" color="light-green darken-3" top timeout='15000')
       | 安裝至桌面,隨時可以查詢
       template(v-slot:action="{ attrs }")
         v-btn( @click="dismiss" text) 取消
-        v-btn( @click="install" text) 安裝    
+        v-btn( @click="install" text) 安裝 
+  v-snackbar(v-model="iosinstall" color="light-green darken-3" top timeout='30000' multiLine)
+    div
+      | 安裝至桌面,隨時可以查詢
+    div 
+      | iOS使用者, 請使用Safari開啟, 選擇分享
+      v-icon {{ icons.mdiExportVariant}}
+      | 後 加入主畫面
+      v-icon {{ icons.mdiPlusBoxOutline }}
+    
 </template>
 
 <script>
@@ -104,6 +113,8 @@ import {
   mdiShareVariant,
   mdiHeart,
   mdiPineTree,
+  mdiExportVariant,
+  mdiPlusBoxOutline,
 } from '@mdi/js'
 
 export default {
@@ -124,15 +135,29 @@ export default {
       mdiShareVariant,
       mdiHeart,
       mdiPineTree,
+      mdiExportVariant,
+      mdiPlusBoxOutline,
     },
     drawer: false,
     builddate: '',
     deferredPrompt: null,
     installed: false,
+    iosinstall: false,
   }),
   computed: {
     isShare() {
       return navigator.share
+    },
+    isIos() {
+      return /iphone|ipad|ipod|mac/.test(
+        window.navigator.userAgent.toLowerCase()
+      )
+    },
+    isInStandaloneMode() {
+      return !('standalone' in window.navigator && window.navigator.standalone)
+    },
+    userAgent() {
+      return window.navigator.userAgent.toLowerCase()
     },
   },
   created() {
@@ -152,6 +177,7 @@ export default {
     this.builddate = this.$moment(
       new Date(parseInt(document.documentElement.dataset.buildTimestamp))
     ).format('YYYY-MM-DD HH:mm')
+    this.iosinstall = this.isIos && this.isInStandaloneMode
   },
   methods: {
     async dismiss() {

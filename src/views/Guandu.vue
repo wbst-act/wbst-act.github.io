@@ -1,16 +1,23 @@
 <template lang="pug">
 WbstHeader(title='關渡自然公園即時鳥況')
-  v-list( dense )
-    v-divider
-    template(v-for="bird, index in record")
-      v-list-item( :key="bird.speciesCode")
-        v-list-item-avatar
-          | {{ bird.howMany}}
-        v-list-item-content
-          v-list-item-title 
-            | {{ birds[bird.speciesCode].name }}            
-            span.float-right {{ bird.obsDt}}
+  v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
+    div 到關渡自然公園賞鳥, 記得紀錄eBird
+    div 選擇熱點"台北關渡IBA--自然公園(Guandu IBA--Nature Park)"
+  template(v-if="loading")
+    v-progress-linear(color='green' indeterminate rounded height="6")
+    v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
+  template(v-else)
+    v-list( dense )
       v-divider
+      template(v-for="bird, index in record")
+        v-list-item( :key="bird.speciesCode")
+          v-list-item-avatar
+            | {{ bird.howMany}}
+          v-list-item-content
+            v-list-item-title 
+              | {{ birds[bird.speciesCode].name }}            
+              span.float-right {{ bird.obsDt}}
+        v-divider
 </template>
 <script>
 import WbstHeader from '@/components/WbstHeader.vue'
