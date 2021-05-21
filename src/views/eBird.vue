@@ -29,11 +29,14 @@ v-app
               v-list-item-title 
                 | {{ birds[bird.speciesCode].name }}
                 span.float-right.caption(v-if="index==0 || (index-1 >= 0  && birds[record[index-1].speciesCode].family != birds[bird.speciesCode].family)") {{ birds[bird.speciesCode].family }}
+              v-list-item-subtitle(v-if="bird.comments") {{ bird.comments }}
+                
           v-divider
 </template>
 
 <script>
 import { mdiArrowLeft, mdiBird } from '@mdi/js'
+import { mapState } from 'vuex'
 export default {
   name: 'eBird',
   data: () => ({
@@ -56,6 +59,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['apikey']),
     getfamily() {
       const family = []
       this.record.forEach(item => {
@@ -75,7 +79,7 @@ export default {
     async eBird(sid) {
       return await this.$http
         .get(`https://api.ebird.org/v2/product/checklist/view/${sid}`, {
-          headers: { 'X-eBirdApiToken': '23abgao7v09b' },
+          headers: { 'X-eBirdApiToken': this.apikey },
         })
         .then(async ret => {
           this.date = this.$moment(ret.data.creationDt, 'YYYY-MM-DD HH:SS')
@@ -86,7 +90,7 @@ export default {
     async HotspotName(locId) {
       return await this.$http
         .get(`https://api.ebird.org/v2/ref/hotspot/info/${locId}`, {
-          headers: { 'X-eBirdApiToken': '23abgao7v09b' },
+          headers: { 'X-eBirdApiToken': this.apikey },
         })
         .then(ret => {
           return ret.data.name

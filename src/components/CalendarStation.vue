@@ -2,27 +2,30 @@
 v-container(fluid)
   v-row.fill-height
     v-col(cols="12")
-      v-skeleton-loader(type="table-heading, list-item-two-line, image, table-tfoot" v-if="loading")
+      v-skeleton-loader(type="list-item-two-line,list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line,list-item-two-line, list-item-two-line" v-if="loading")
       v-sheet(hieght="64" v-else)
         v-toolbar( flat )
-          v-menu(bottom).mr-4
-            template(v-slot:activator="{ on, attrs }")
-              v-btn(outlined, color="gray darken-2" v-bind="attrs", v-on="on")
-                span {{ types[type] }}
-                v-icon(right) {{ icons.mdiMenuDown }}
-            v-list
-              v-list-item(v-for="( key, value) in types" :key="key" @click='type=value')
-                v-list-item-title {{ key }}
+          ///
+            v-menu(bottom).mr-4
+              template(v-slot:activator="{ on, attrs }")
+                v-btn(outlined, color="gray darken-2" v-bind="attrs", v-on="on")
+                  span {{ types[listtype] }}
+                  v-icon(right) {{ icons.mdiMenuDown }}
+              v-list
+                v-list-item(v-for="( key, value) in types" :key="key" @click='changeType(value)')
+                  v-list-item-title {{ key }}
           v-btn(fab, text small color="grey darken-2" @click="prev")
             v-icon(small) {{ icons.mdiChevronLeft }}
-          v-btn(fab, text, small, color="grey darken-2" @click="next")
-            v-icon(small) {{ icons.mdiChevronRight }}
           v-spacer
           template(v-if="$refs.calendar")
             v-toolbar-title {{ $refs.calendar.title }}
           template(v-else) 
             v-toolbar-title 本週
-        v-sheet(height="600")
+          v-spacer
+          v-btn(fab, text, small, color="grey darken-2" @click="next")
+            v-icon(small) {{ icons.mdiChevronRight }}
+          
+        v-sheet(height="600" :class="listtype=='list'?'d-none': ''")
           v-calendar(            
             ref="calendar",
             first-time='06:30',
@@ -34,10 +37,29 @@ v-container(fluid)
             event-overlap-threshold="30",
             :events-color="getEventColor",            
             @click:event="showEvent",
+            @change="getEvent"
             :weekdays="weekday",
             :weekday-format="getDay",
             :month-format="getMonth"
             )
+        v-sheet(:class="listtype!='list'?'d-none': ''")
+          template(v-for="item in filterevent")
+            v-alert(:key="item.name + item.start" border="left" :color="getcolor(item)" colored-border elevation="2" dense)
+              v-row(dense)
+                v-col(cols="2" align-self="center") {{ item.date | moment('MM-DD') }}
+                v-col(cols="7")
+                  v-list(dense)          
+                    v-list-item
+                      v-list-item-content                  
+                        v-list-item-title            
+                          |  {{ item.name }}
+                          span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
+                          
+                        v-list-item-subtitle
+                          | {{ item.leader.join(' ') }}
+                v-col(cols="3" align-self="center")
+                  | {{ item.starttime}} - {{ item.endtime}}
+              
   v-dialog(v-model='selectedOpen')
     v-sheet(dense v-if='selectedEvent')
       v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
@@ -83,7 +105,8 @@ export default {
       mdiGoogleMaps,
     },
     focus: '',
-    types: { week: '週', month: '月' },
+    types: { list: '列表', week: '週', month: '月' },
+    listtype: 'list',
     type: 'week',
     selectedEvent: null,
     seelctedElement: null,
@@ -98,7 +121,7 @@ export default {
       'grey lighten-1',
       'indigo',
     ],
-    list: [],
+    filterevent: [],
     weekday: [6, 0],
     loading: true,
   }),
@@ -207,6 +230,37 @@ export default {
     getDay(date) {
       const daysOfWeek = ['日', '一', '二', '三', '四', '五', '六']
       return daysOfWeek[date.weekday]
+    },
+    changeType(type) {
+      this.listtype = type
+      if (type == 'month') {
+        this.type = 'month'
+      } else {
+        this.type = 'week'
+      }
+    },
+    getcolor(item) {
+      if (item.cancel == 'y') {
+        return 'red lighten-4'
+      } else if (item.done == true) {
+        return 'grey lighten-1'
+      } else if (item.name == '關渡自然公園中心二樓') {
+        return 'light-green darken-1'
+      } else if (item.name == '芝山綠園') {
+        return 'amber darken-1'
+      } else if (item.name == '大安森林公園') {
+        return 'orange darken-2'
+      } else {
+        return 'light-blue darken-2'
+      }
+    },
+    getEvent({ start, end }) {
+      this.filterevent = this.events.filter(
+        item =>
+          this.$moment(item.date).valueOf() >=
+            this.$moment(start.date).valueOf() &&
+          this.$moment(item.date).valueOf() <= this.$moment(end.date).valueOf()
+      )
     },
   },
 }

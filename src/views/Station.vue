@@ -1,13 +1,13 @@
 <template lang="pug">
 wbst-header(title='駐站解說')
-  calendar-station
+  station-list
 </template>
 
 <script>
 import WbstHeader from '@/components/WbstHeader.vue'
-import CalendarStation from '@/components/CalendarStation.vue'
+import StationList from '@/components/StationList.vue'
 export default {
   name: 'Station',
-  components: { WbstHeader, CalendarStation },
+  components: { WbstHeader, StationList },
 }
 </script>

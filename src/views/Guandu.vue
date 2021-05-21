@@ -20,6 +20,7 @@ WbstHeader(title='關渡自然公園即時鳥況')
         v-divider
 </template>
 <script>
+import { mapState } from 'vuex'
 import WbstHeader from '@/components/WbstHeader.vue'
 import { mdiArrowLeft, mdiBird } from '@mdi/js'
 export default {
@@ -38,6 +39,7 @@ export default {
     this.birds = this.$offlineStorage.get('birds')
   },
   computed: {
+    ...mapState(['apikey']),
     getfamily() {
       const family = []
       this.record.forEach(item => {
@@ -59,7 +61,7 @@ export default {
         .get(
           'https://api.ebird.org/v2/data/obs/L2329696/recent?back=30&hotspot=true',
           {
-            headers: { 'X-eBirdApiToken': '23abgao7v09b' },
+            headers: { 'X-eBirdApiToken': this.apikey },
           }
         )
         .then(async ret => {
