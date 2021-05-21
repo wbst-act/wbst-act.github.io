@@ -7,8 +7,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    redirect: encodeURI('/台北鳥會例行活動行事曆'),
+  },
+  {
+    path: encodeURI('/台北鳥會例行活動行事曆'),
     component: Home,
-    name: '行事曆',
+    name: '台北鳥會例行活動行事曆',
   },
   {
     path: encodeURI('/歷史記錄'),
@@ -22,7 +26,7 @@ const routes = [
   },
   {
     path: encodeURI('/實名制'),
-    name: '實名制',
+    name: '實名制個資設定',
     component: () => import('../views/RealName.vue'),
   },
   {

@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title="電子發票捐贈碼")
+v-main
   v-container
     .d-flex.flex-column.justify-space-between.align-center.mt-10
       v-card(width="400")
@@ -10,13 +10,11 @@ wbst-header(title="電子發票捐贈碼")
 
 <script>
 import { mdiArrowLeft } from '@mdi/js'
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Share',
   data: () => ({
     icons: { mdiArrowLeft },
   }),
-  components: { WbstHeader },
   computed: {
     isShare() {
       return navigator.share ?? false

@@ -1,25 +1,22 @@
 <template lang="pug">
-wbst-header(title="分享北鳥例行APP")
-  template(v-slot:toolbar)
-    v-btn(icon v-if="isShare" @click="share")
-      v-icon {{ icons.mdiShareVariant }}
+v-main
   v-main
     v-container
-      .d-flex.flex-column.justify-space-between.align-center.mt-10
+      .d-flex.flex-column.justify-space-between.align-center.mt-5
         v-card(width="400")
           v-card-text
             v-img(src="@/assets/qrcode.png" max-height="400" max-width="400" centered)
+    v-btn(v-if="isShare" @click="share" fixed, dark, fab, bottom, right, color="green")
+      v-icon {{ icons.mdiShareVariant }}
 </template>
 
 <script>
 import { mdiArrowLeft, mdiShareVariant } from '@mdi/js'
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Share',
   data: () => ({
     icons: { mdiArrowLeft, mdiShareVariant },
   }),
-  components: { WbstHeader },
   computed: {
     isShare() {
       return navigator.share ?? false

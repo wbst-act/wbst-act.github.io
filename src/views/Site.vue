@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title='相關網站')
+v-main
   v-list(dense)
     template(v-for="site in sites")
       v-list-item(:key="site.name" link :href="site.url" target="_blank")
@@ -12,10 +12,8 @@ wbst-header(title='相關網站')
 
 <script>
 import { mdiStar } from '@mdi/js'
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Travel',
-  components: { WbstHeader },
   data: () => ({
     icons: { mdiStar },
     sites: [],

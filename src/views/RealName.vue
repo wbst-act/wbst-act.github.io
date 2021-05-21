@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title='實名制個資設定')
+v-main
   v-list
     template(v-for="item, index in users")
       v-list-item(:key="item.name" @click="edituser(index, item)")
@@ -7,7 +7,6 @@ wbst-header(title='實名制個資設定')
           v-icon(color="green") {{ icons.mdiPencil }}
         v-list-item-content
           v-list-item-title {{ item.name }}
-        
       v-divider
     v-alert.ma-5(border="top" colored-border type="info" elevation="2") 
       | 設定後,下次執行實名制簽到會自動帶入個人資料。
@@ -40,10 +39,8 @@ wbst-header(title='實名制個資設定')
 </template>
 <script>
 import { mdiDelete, mdiPlus, mdiPencil } from '@mdi/js'
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'RealName',
-  components: { WbstHeader },
   data: () => ({
     icons: {
       mdiDelete,

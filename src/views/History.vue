@@ -1,9 +1,16 @@
 <template lang="pug">
-wbst-header(title='歷史記錄查詢')
+v-main
   v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
     | 例行活動結束,記錄員如果會使用eBird,請分享記錄給"wbst act",加速資料更新。
-  v-skeleton-loader(type="list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line,list-item-avatar-two-line" v-if="loading")
+  v-skeleton-loader(v-if="loading", 
+    type="list-item-avatar-two-line, list-item-avatar-two-line, \
+      list-item-avatar-two-line,list-item-avatar-two-line, \
+      list-item-avatar-two-line,list-item-avatar-two-line, \
+      list-item-avatar-two-line,list-item-avatar-two-line, \
+      list-item-avatar-two-line,list-item-avatar-two-line, \
+      list-item-avatar-two-line,list-item-avatar-two-line")
   v-list(v-else)
+    v-divider  
     template(v-for="item in history")
       v-list-item(v-if="item.ebird!=''" link @click='goto(item)')
         template(v-if='item.watchbirds > 0')
@@ -11,13 +18,12 @@ wbst-header(title='歷史記錄查詢')
         template(v-else)
           v-list-item-avatar(size='28')          
         v-list-item-content
-          v-list-item-title 
+          v-list-item-title
             | {{ item.location }}
-            span.caption.float-right {{ item.leader.join(' ')}}
-          v-list-item-subtitle 
-            | {{ item.date | moment('YYYY-MM-DD')}} 
-            span.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
-          
+            span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
+          v-list-item-subtitle
+            span.caption {{ item.leader.join(' ')}} 
+            span.caption.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
         v-list-item-action      
           v-icon(color='green' dark) {{ icons.mdiFormatListBulleted }}
       v-list-item(v-else)
@@ -28,20 +34,18 @@ wbst-header(title='歷史記錄查詢')
         v-list-item-content
           v-list-item-title
             | {{ item.location }}
-            span.caption.float-right {{ item.leader.join(' ')}}
+            span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
           v-list-item-subtitle
-            | {{ item.date | moment('YYYY-MM-DD')}} 
-            span.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
+            span.caption {{ item.leader.join(' ')}} 
+            span.caption.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
         v-list-item-action
-      v-divider        
+      v-divider
 </template>
 
 <script>
 import { mdiFormatListBulleted } from '@mdi/js'
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'History',
-  components: { WbstHeader },
   data: () => ({
     icons: {
       mdiFormatListBulleted,

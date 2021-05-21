@@ -4,7 +4,7 @@ v-app
       v-model="drawer",
       :clipped="$vuetify.breakpoint.lgAndUp")
     v-list( nav, dense )
-      v-list-item(to='/')
+      v-list-item(:to="{name: '台北鳥會例行活動行事曆'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiCalendar}}          
         v-list-item-content
@@ -41,7 +41,7 @@ v-app
         v-list-item-content
           v-list-item-title 志工排班查詢
       v-divider      
-      v-list-item(:to="{name: '實名制'}")
+      v-list-item(:to="{name: '實名制個資設定'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiAccountCircle}}
         v-list-item-content
@@ -80,8 +80,7 @@ v-app
     v-spacer
     v-icon(v-if='isOffline') {{ icons.mdiWifiStrengthOffOutline}}
     slot(name='toolbar')
-  v-main  
-    slot
+  slot
   v-snackbar(v-model="installed" color="light-green darken-3" top timeout='15000')
       | 安裝至桌面,隨時可以查詢
       template(v-slot:action="{ attrs }")
@@ -119,7 +118,6 @@ import {
 
 export default {
   name: 'WbstHeader',
-  props: ['title'],
   data: () => ({
     icons: {
       mdiFormatListBulleted,
@@ -145,6 +143,9 @@ export default {
     iosinstall: false,
   }),
   computed: {
+    title(){
+      return this.$route.name;
+    },
     isShare() {
       return navigator.share
     },

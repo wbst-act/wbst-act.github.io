@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title='志工排班查詢')
+v-main
   v-container(fluid )
     v-card.mb-3
       v-container(fluid )
@@ -32,11 +32,9 @@ wbst-header(title='志工排班查詢')
 </template>
 
 <script>
-import WbstHeader from '@/components/WbstHeader.vue'
 import { mdiCalendarPlus } from '@mdi/js'
 export default {
   name: 'Search',
-  components: { WbstHeader },
   data: () => ({
     icons: { mdiCalendarPlus },
     allschedule: [],

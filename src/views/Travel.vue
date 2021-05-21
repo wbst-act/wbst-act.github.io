@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title='大型活動資訊')
+v-main
   v-container
     v-card
       v-card-text 
@@ -7,9 +7,7 @@ wbst-header(title='大型活動資訊')
 </template>
 
 <script>
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Travel',
-  components: { WbstHeader },
 }
 </script>

@@ -1,5 +1,5 @@
 <template lang="pug">
-WbstHeader(title='關渡自然公園即時鳥況')
+v-main
   v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
     div 到關渡自然公園賞鳥, 記得紀錄eBird
     div 選擇熱點"台北關渡IBA--自然公園(Guandu IBA--Nature Park)"
@@ -21,11 +21,9 @@ WbstHeader(title='關渡自然公園即時鳥況')
 </template>
 <script>
 import { mapState } from 'vuex'
-import WbstHeader from '@/components/WbstHeader.vue'
 import { mdiArrowLeft, mdiBird } from '@mdi/js'
 export default {
   name: 'eBird',
-  components: { WbstHeader },
   data: () => ({
     icons: {
       mdiArrowLeft,

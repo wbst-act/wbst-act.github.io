@@ -1,5 +1,5 @@
 <template lang="pug">
-wbst-header(title='例行路線查詢')
+v-main
   v-list( dense )
     template(v-for="item in paths" )
       v-list-item(v-if="item.locid!='' && isOnline" link :href="'https://ebird.org/hotspot/'+item.locid", target="_blank" :key="item.name")
@@ -22,10 +22,8 @@ wbst-header(title='例行路線查詢')
 
 <script>
 import { mdiBird } from '@mdi/js'
-import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'Paths',
-  components: { WbstHeader },
   data: () => ({
     icons: { mdiBird },
     paths: [],

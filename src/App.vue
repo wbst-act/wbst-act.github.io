@@ -1,9 +1,18 @@
 <template lang="pug">
-  router-view 
+  wbst-header
+    router-view 
+    v-snackbar(:value="updateExists" :timeout="-1" color="light-green darken-3" centered)
+      | 有新版本可以更新
+      template(v-slot:action="{ attrs }")
+        v-btn(@click="refreshApp" text dark) 更新
 </template>
 <script>
+import update from '@/mixins/update'
+import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'App',
+  mixins: [update],
+  components: { WbstHeader },
   async mounted() {
     if (this.isOnline) {
       const version = this.$offlineStorage.get('version')

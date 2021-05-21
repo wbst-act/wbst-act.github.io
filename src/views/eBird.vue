@@ -9,7 +9,7 @@ v-app
     v-app-bar(app, color="light-green darken-3", dark, dense, :clipped="$vuetify.breakpoint.lgAndUp")
       v-app-bar-nav-icon(@click="$router.back()")
         v-icon {{ icons.mdiArrowLeft }}
-      v-toolbar-title {{ date | moment('YYYY-MM-DD')}} {{ location}}
+      v-toolbar-title {{ date | moment('YYYY-MM-DD')}}
       v-spacer
       v-btn(dark :href="`https://ebird.org/checklist/${sid}`" icon target="_blank")
         v-icon {{ icons.mdiBird}}
@@ -18,6 +18,7 @@ v-app
         v-list-item
           v-list-item-content
             v-list-item-title 
+              | {{ location}}
               span.float-right 共{{ getfamily }}科 {{ record.length }}種
       v-list( dense )
         v-divider
@@ -94,6 +95,9 @@ export default {
         })
         .then(ret => {
           return ret.data.name
+        })
+        .catch(() => {
+          return '私人熱點'
         })
     },
   },
