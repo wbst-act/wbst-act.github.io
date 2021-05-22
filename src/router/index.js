@@ -1,31 +1,30 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    redirect: encodeURI('/台北鳥會例行活動行事曆'),
+    redirect: encodeURI('/台北鳥會例行活動'),
   },
   {
-    path: encodeURI('/台北鳥會例行活動行事曆'),
-    component: Home,
-    name: '台北鳥會例行活動行事曆',
+    path: encodeURI('/台北鳥會例行活動'),
+    name: '台北鳥會例行活動',
+    component: () => import('../views/Activity.vue'),
   },
   {
-    path: encodeURI('/歷史記錄'),
-    name: '歷史記錄',
+    path: encodeURI('/歷史記錄查詢'),
+    name: '歷史記錄查詢',
     component: () => import('../views/History.vue'),
   },
   {
-    path: encodeURI('/例行路線'),
-    name: '例行路線',
+    path: encodeURI('/例行路線查詢'),
+    name: '例行路線查詢',
     component: () => import('../views/Paths.vue'),
   },
   {
-    path: encodeURI('/實名制'),
+    path: encodeURI('/實名制個資設定'),
     name: '實名制個資設定',
     component: () => import('../views/RealName.vue'),
   },
@@ -35,8 +34,8 @@ const routes = [
     component: () => import('@/views/eBird.vue'),
   },
   {
-    path: encodeURI('/排班查詢'),
-    name: '排班查詢',
+    path: encodeURI('/志工排班查詢'),
+    name: '志工排班查詢',
     component: () => import('@/views/Search.vue'),
   },
   {
@@ -55,8 +54,8 @@ const routes = [
     component: () => import('@/views/Site.vue'),
   },
   {
-    path: encodeURI('/分享'),
-    name: '分享',
+    path: encodeURI('/分享APP'),
+    name: '分享APP',
     component: () => import('@/views/Share.vue'),
   },
   {

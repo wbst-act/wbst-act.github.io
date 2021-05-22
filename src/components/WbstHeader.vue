@@ -4,7 +4,7 @@ v-app
       v-model="drawer",
       :clipped="$vuetify.breakpoint.lgAndUp")
     v-list( nav, dense )
-      v-list-item(:to="{name: '台北鳥會例行活動行事曆'}")
+      v-list-item(:to="{name: '台北鳥會例行活動'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiCalendar}}          
         v-list-item-content
@@ -14,12 +14,12 @@ v-app
           v-icon {{icons.mdiTelescope}}          
         v-list-item-content
           v-list-item-title 駐站解說
-      v-list-item(:to="{name: '歷史記錄'}")
+      v-list-item(:to="{name: '歷史記錄查詢'}")
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiFormatListBulleted }}          
         v-list-item-content
           v-list-item-title 歷史記錄查詢
-      v-list-item(:to="{name: '例行路線'}")
+      v-list-item(:to="{name: '例行路線查詢'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiMapMarkerPath}}
         v-list-item-content
@@ -35,7 +35,7 @@ v-app
         v-list-item-content
           v-list-item-title 關渡自然公園即時鳥況
       v-divider
-      v-list-item(:to="{name: '排班查詢'}")
+      v-list-item(:to="{name: '志工排班查詢'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiTableSearch}}
         v-list-item-content
@@ -47,7 +47,7 @@ v-app
         v-list-item-content
           v-list-item-title 實名制個資設定
       v-divider
-      v-list-item(:to="{name: '分享'}")
+      v-list-item(:to="{name: '分享APP'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiShareVariant}}
         v-list-item-content
@@ -86,7 +86,7 @@ v-app
       template(v-slot:action="{ attrs }")
         v-btn( @click="dismiss" text) 取消
         v-btn( @click="install" text) 安裝 
-  v-snackbar(v-model="iosinstall" color="light-green darken-3" top timeout='30000' multiLine)
+  v-snackbar(v-model="iosinstall" color="light-green darken-3" bottom timeout='30000' multiLine)
     div
       | 安裝至桌面,隨時可以查詢
     div 
@@ -143,8 +143,8 @@ export default {
     iosinstall: false,
   }),
   computed: {
-    title(){
-      return this.$route.name;
+    title() {
+      return this.$route.name
     },
     isShare() {
       return navigator.share

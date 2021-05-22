@@ -23,8 +23,8 @@ v-main
           template(v-for="item , index in filterevent")
             v-alert(:key="index" border="left" :color="getcolor(item)" colored-border elevation="2" dense)
               v-row(dense no-gutters)
-                v-col(cols="3" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
-                v-col(cols="9")
+                v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
+                v-col(cols="10")
                   v-list(dense)          
                     v-list-item
                       v-list-item-content                  
