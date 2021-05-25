@@ -1,81 +1,83 @@
 <template lang="pug">
 v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
-      v-sheet(dense v-if='selectedEvent')
-        v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
-          v-toolbar-title {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }} {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{selectedEvent.type}} 
+  ebird-dialog(:dialog='dialog' :sid='sid' @ebird-close="dialog=false")
+  v-card(dense v-if='selectedEvent')
+    v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
+      v-toolbar-title {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }} {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{selectedEvent.type}} 
+      v-spacer
+      v-btn(icon small dark @click="$emit('close')")
+        v-icon {{ icons.mdiClose }}
+    v-card(v-if='selectedEvent')
+      v-list(dense)
+        template(v-if='ebird_hotspot==""')
+          v-list-item
+            v-list-item-content               
+              v-list-item-title 路線
+              v-list-item-subtitle {{ selectedEvent.name }}
+        template(v-else)
+          v-list-item(link :href='ebird_hotspot' target="_blank")
+            v-list-item-content               
+              v-list-item-title 路線
+              v-list-item-subtitle {{ selectedEvent.name }}
+            v-list-item-action
+              v-icon(color="green" icon ) {{icons.mdiBird }}              
+        template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false") 
+          v-list-item(link :href='google_calendar' target="_blank")
+            v-list-item-content               
+              v-list-item-title 集合時間
+              v-list-item-subtitle {{ selectedEvent.starttime }}
+            v-list-item-action                
+              v-icon(color="orange" dark icon ) {{ icons.mdiCalendarPlus }}
+          v-list-item(link :href='google_map' target="_blank")
+            v-list-item-content
+              v-list-item-title 集合地點
+              v-list-item-subtitle {{ selectedEvent.location }} 
+              v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }} 
+            v-list-item-action
+              v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
+        template(v-else)
+          v-list-item
+            v-list-item-content               
+              v-list-item-title 集合時間
+              v-list-item-subtitle {{ selectedEvent.starttime }}
+          v-list-item
+            v-list-item-content
+              v-list-item-title 集合地點
+              v-list-item-subtitle {{ selectedEvent.location }} 
+              v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }} 
+        v-list-item
+          v-list-item-content
+            v-list-item-title 領隊
+            v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
+      //template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")
+      template(v-if="selectedEvent.done==false")          
+        v-divider
+        v-card-actions
+          template(v-if="users.length==0")
+            v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) 實名制簽到
+          template(v-else-if="users.length==1")
+            v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) 實名制簽到
+          template(v-else)
+            v-menu(offset-y)
+              template(v-slot:activator="{ on, attrs }")
+                v-btn(link  block color="green" dark v-bind="attrs" v-on="on") 實名制簽到
+              v-list
+                v-list-item(v-for="user in users" :key="user.name" link :href="google_form(user.name, user.tel, user.member)" target="_blank")
+                  v-list-item-title {{ user.name }}
+          v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
+      template(v-if="selectedEvent.ebird!=''")
+        v-divider
+        v-card-actions
           v-spacer
-          v-btn(icon small dark @click="$emit('close')")
-            v-icon {{ icons.mdiClose }}
-        v-card(v-if='selectedEvent')
-          v-list(dense)
-            template(v-if='ebird_hotspot==""')
-              v-list-item
-                v-list-item-content               
-                  v-list-item-title 路線
-                  v-list-item-subtitle {{ selectedEvent.name }}
-            template(v-else)
-              v-list-item(link :href='ebird_hotspot' target="_blank")
-                v-list-item-content               
-                  v-list-item-title 路線
-                  v-list-item-subtitle {{ selectedEvent.name }}
-                v-list-item-action
-                  v-icon(color="green" icon ) {{icons.mdiBird }}              
-            template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false") 
-              v-list-item(link :href='google_calendar' target="_blank")
-                v-list-item-content               
-                  v-list-item-title 集合時間
-                  v-list-item-subtitle {{ selectedEvent.starttime }}
-                v-list-item-action                
-                  v-icon(color="orange" dark icon ) {{ icons.mdiCalendarPlus }}
-              v-list-item(link :href='google_map' target="_blank")
-                v-list-item-content
-                  v-list-item-title 集合地點
-                  v-list-item-subtitle {{ selectedEvent.location }} 
-                  v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }} 
-                v-list-item-action
-                  v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
-            template(v-else)
-              v-list-item
-                v-list-item-content               
-                  v-list-item-title 集合時間
-                  v-list-item-subtitle {{ selectedEvent.starttime }}
-              v-list-item
-                v-list-item-content
-                  v-list-item-title 集合地點
-                  v-list-item-subtitle {{ selectedEvent.location }} 
-                  v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }} 
-            v-list-item
-              v-list-item-content
-                v-list-item-title 領隊
-                v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
-          //template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")
-          template(v-if="selectedEvent.done==false")          
-            v-divider
-            v-card-actions
-              template(v-if="users.length==0")
-                v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) 實名制簽到
-              template(v-else-if="users.length==1")
-                v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) 實名制簽到
-              template(v-else)
-                v-menu(offset-y)
-                  template(v-slot:activator="{ on, attrs }")
-                    v-btn(link  block color="green" dark v-bind="attrs" v-on="on") 實名制簽到
-                  v-list
-                    v-list-item(v-for="user in users" :key="user.name" link :href="google_form(user.name, user.tel, user.member)" target="_blank")
-                      v-list-item-title {{ user.name }}
-              v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
-          template(v-if="selectedEvent.ebird!=''")
-            v-divider
-            v-card-actions
-              v-spacer
-              v-btn(link block @click="goto(selectedEvent)" color="primary") 賞鳥記錄 
+          v-btn(link block @click="goto(selectedEvent)" color="primary") 賞鳥記錄 
 </template>
 
 <script>
 import { mdiClose, mdiCalendarPlus, mdiGoogleMaps, mdiBird } from '@mdi/js'
-
+import EbirdDialog from '@/components/EbirdDialog.vue'
 export default {
   name: 'ActivityDialog',
+  components: { EbirdDialog },
   props: ['selectedOpen', 'selectedEvent'],
   data: () => ({
     icons: {
@@ -87,6 +89,8 @@ export default {
     users: [],
     paths: [],
     open: false,
+    dialog: false,
+    sid: '',
   }),
   created() {
     this.users = this.$offlineStorage.get('users') ?? []
@@ -150,10 +154,16 @@ export default {
       )
     },
     goto(item) {
+      if (this.isOnline) {
+        this.sid = item.ebird
+        this.dialog = true
+      }
+      /*
       this.$router.push({
         name: 'eBird記錄',
         params: { sid: item.ebird, date: item.date, location: item.location },
       })
+      */
     },
   },
 }

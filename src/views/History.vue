@@ -40,18 +40,23 @@ v-main
             span.caption.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
         v-list-item-action
       v-divider
+  ebird-dialog(:dialog='dialog' :sid='sid' @ebird-close="dialog=false")
 </template>
 
 <script>
 import { mdiFormatListBulleted } from '@mdi/js'
+import EbirdDialog from '@/components/EbirdDialog.vue'
 export default {
   name: 'History',
+  components: { EbirdDialog },
   data: () => ({
     icons: {
       mdiFormatListBulleted,
     },
     history: [],
     loading: true,
+    dialog: false,
+    sid: '',
   }),
   async mounted() {
     this.loading = true
@@ -93,10 +98,8 @@ export default {
   methods: {
     goto(item) {
       if (this.isOnline) {
-        this.$router.push({
-          name: 'eBird記錄',
-          params: { sid: item.ebird },
-        })
+        this.sid = item.ebird
+        this.dialog = true
       }
     },
   },

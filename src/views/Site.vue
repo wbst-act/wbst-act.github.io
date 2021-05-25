@@ -13,7 +13,7 @@ v-main
 <script>
 import { mdiStar } from '@mdi/js'
 export default {
-  name: 'Travel',
+  name: 'Site',
   data: () => ({
     icons: { mdiStar },
     sites: [],

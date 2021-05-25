@@ -29,11 +29,6 @@ const routes = [
     component: () => import('../views/RealName.vue'),
   },
   {
-    path: encodeURI('/eBird記錄/:sid'),
-    name: 'eBird記錄',
-    component: () => import('@/views/eBird.vue'),
-  },
-  {
     path: encodeURI('/志工排班查詢'),
     name: '志工排班查詢',
     component: () => import('@/views/Search.vue'),

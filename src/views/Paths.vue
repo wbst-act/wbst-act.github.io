@@ -13,6 +13,7 @@ v-main
         
       v-list-item(v-else :key="item.name")
         v-list-item-avatar(size="24")
+          v-icon(color="green") {{icons.mdiBird}}
         v-list-item-content
           v-list-item-title
             | {{ item.name }}            

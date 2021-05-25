@@ -7,7 +7,7 @@ v-main
     v-progress-linear(color='green' indeterminate rounded height="6")
     v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
   template(v-else)
-    v-list( dense )
+    v-list( dense v-if="record.length>0" )
       v-divider
       template(v-for="bird, index in record")
         v-list-item( :key="bird.speciesCode")
@@ -18,6 +18,9 @@ v-main
               | {{ birds[bird.speciesCode].name }}            
               span.float-right {{ bird.obsDt}}
         v-divider
+    
+    v-alert.ma-5(v-else type="error" border="top" colored-border  elevation="2")
+      | 需連線到網際網路
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -55,16 +58,21 @@ export default {
   },
   methods: {
     async eBirdHotspot() {
-      return await this.$http
-        .get(
-          'https://api.ebird.org/v2/data/obs/L2329696/recent?back=30&hotspot=true',
-          {
-            headers: { 'X-eBirdApiToken': this.apikey },
-          }
-        )
-        .then(async ret => {
-          this.record = ret.data
-        })
+      if (this.isOnline) {
+        return await this.$http
+          .get(
+            'https://api.ebird.org/v2/data/obs/L2329696/recent?back=30&hotspot=true',
+            {
+              headers: { 'X-eBirdApiToken': this.apikey },
+            }
+          )
+          .then(async ret => {
+            this.record = ret.data
+          })
+      } else {
+        this.record = []
+        return
+      }
     },
     goto(subId) {
       if (this.isOnline) {

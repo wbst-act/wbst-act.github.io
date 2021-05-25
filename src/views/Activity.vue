@@ -7,18 +7,15 @@ v-main
         v-sheet
           v-toolbar( flat dense)
             v-btn(fab, text color="grey darken-2" @click="addDay(-7)")
-              v-icon(small) {{ icons.mdiChevronLeft }}
+              v-icon {{ icons.mdiChevronLeft }}
             v-spacer
             v-toolbar-title {{ $moment(focus).day(6)| moment('Y年M月') }}
             v-spacer
             v-btn(fab, text  color="grey darken-2" @click="addDay(7)")
-              v-icon(small) {{ icons.mdiChevronRight }}
+              v-icon {{ icons.mdiChevronRight }}
       template(v-if="loading")
         v-col(cols="12")
-          v-skeleton-loader(type="list-item-two-line,list-item-two-line, \
-            list-item-two-line, list-item-two-line, \
-            list-item-two-line,list-item-two-line, \
-            list-item-two-line,list-item-two-line")
+          v-skeleton-loader(type="list-item-two-line, list-item-two-line, list-item-two-line")
       template(v-else)
         v-col(cols="12" v-if="filterevent.length>0").ma-0.pa-0
           v-list(flat)

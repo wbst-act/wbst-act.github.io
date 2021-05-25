@@ -78,6 +78,19 @@ export default {
           }))
           this.$offlineStorage.set('sites', sites)
         })
+
+      await this.$http
+        .get(
+          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/5/public/full?alt=json'
+        )
+        .then(ret => {
+          const travels = ret.data.feed.entry.map(item => ({
+            date: item['gsx$date']['$t'],
+            name: item['gsx$name']['$t'],
+            url: item['gsx$url']['$t'],
+          }))
+          this.$offlineStorage.set('travels', travels)
+        })
     },
   },
 }
