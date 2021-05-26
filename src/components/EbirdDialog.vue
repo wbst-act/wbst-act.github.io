@@ -6,7 +6,17 @@ v-dialog(v-model="dialog" fullscreen hide-overlay @click:outside="$emit('ebird-c
         v-toolbar-title 連線查詢記錄中...
       v-sheet
         v-progress-linear(color='green' indeterminate rounded height="6")
-        v-skeleton-loader(type="list-item, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
+        v-skeleton-loader(type="list-item, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar, \
+          list-item-avatar, list-item-avatar")
   template(v-else)
     v-card
       v-toolbar(color="light-green darken-3", dark, dense)
