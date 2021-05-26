@@ -8,9 +8,8 @@ v-main
         v-list-item-content
           v-list-item-title {{ item.name }}
       v-divider
-    v-alert.ma-5(border="top" colored-border type="info" elevation="2") 
-      | 設定後,下次執行實名制簽到會自動帶入個人資料。
-      | 家庭成員也可以設定多組資料。
+    v-alert.ma-2(border="top" colored-border type="info" elevation="2") 
+      .caption  設定後,下次執行實聯制簽到會自動帶入個人資料。家庭成員也可以設定多組資料。
   v-dialog(v-model='dialog')
     template(v-slot:activator="{on, attrs}")
       v-btn(fixed, dark, fab, bottom, right, color="green" @click="adduser")
@@ -18,7 +17,7 @@ v-main
     v-card(dense)
       v-card
         v-toolbar.white--text(class="light-green darken-3"  dense)
-          v-toolbar-title 實名制個資設定
+          v-toolbar-title 實聯制個資設定
           v-spacer
           v-btn(v-if="userid!=-1" @click="del()" icon dark)
             v-icon {{ icons.mdiDelete }}

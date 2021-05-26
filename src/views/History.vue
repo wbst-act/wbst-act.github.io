@@ -1,7 +1,7 @@
 <template lang="pug">
 v-main
-  v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
-    | 例行活動結束,記錄員如果會使用eBird,請分享記錄給"wbst act",加速資料更新。
+  v-alert.ma-2(type="info" border="top" colored-border  elevation="2") 
+    .caption  例行活動結束,記錄員如果會使用eBird,請分享記錄給"wbst act",加速資料更新。
   v-skeleton-loader(v-if="loading", 
     type="list-item-avatar-two-line, list-item-avatar-two-line, \
       list-item-avatar-two-line,list-item-avatar-two-line, \

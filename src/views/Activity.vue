@@ -17,26 +17,27 @@ v-main
         v-col(cols="12")
           v-skeleton-loader(type="list-item-two-line, list-item-two-line, list-item-two-line")
       template(v-else)
-        v-col(cols="12" v-if="filterevent.length>0").ma-0.pa-0
+        v-col.ma-0.pa-0(cols="12" v-if="filterevent.length>0")
           v-list(flat nav)
             template(v-for="item , index in filterevent")
-              v-list-item.ma-0.pa-0(@click="eventOpen(item)" dense :key="index")
-                v-alert(border="left" :color="item.color" colored-border elevation="2" dense)
-                  v-container.ma-0.pa-0
-                    v-row(dense no-gutters)
-                      v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
-                      v-col(cols="10")
-                        v-list(dense)          
-                          v-list-item
-                            v-list-item-content                  
-                              v-list-item-title            
-                                | {{ item.name }}
-                                span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
-                                span.float-right {{ item.starttime}}
-                              v-list-item-subtitle            
-                                | {{ item.location }}                               
-                              v-list-item-subtitle
-                                | {{ item.leader.join(' ') }}                  
+              v-list-item.ma-0.pa-0.mb-3(@click="eventOpen(item)" dense :key="index")
+                v-list-item-content.pa-1
+                  v-alert.ma-0.pa-0(border="left" :color="item.color" colored-border elevation="2" dense)
+                    v-container.px-3.py-0
+                      v-row(no-gutters)
+                        v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
+                        v-col(cols="10")
+                          v-list(dense)          
+                            v-list-item
+                              v-list-item-content                  
+                                v-list-item-title            
+                                  | {{ item.name }}
+                                  span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
+                                  span.float-right {{ item.starttime}}
+                                v-list-item-subtitle            
+                                  | {{ item.location }}                               
+                                v-list-item-subtitle
+                                  | {{ item.leader.join(' ') }}                  
         v-col(cols="12" v-else)
           .d-flex.flex-column.justify-space-between.align-center 尚未安排例行活動,敬請等待
 </template>
@@ -55,7 +56,7 @@ export default {
     },
     colors: [
       'teal',
-      'grey darken-1',
+      'red lighten-4',
       'green',
       'deep-purple',
       'orange lighten-1',

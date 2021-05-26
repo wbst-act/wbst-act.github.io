@@ -1,6 +1,6 @@
 <template lang="pug">
 v-main
-  v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
+  v-alert.ma-2(type="info" border="top" colored-border  elevation="2") 
     .caption 到關渡自然公園賞鳥，記得紀錄eBird，選擇熱點 "台北關渡IBA--自然公園(Guandu IBA--Nature Park)"
   template(v-if="loading")
     v-progress-linear(color='green' indeterminate rounded height="6")
@@ -18,7 +18,7 @@ v-main
               span.float-right.caption {{ bird.obsDt | moment('YYYY-MM-DD')}}
         v-divider
     
-    v-alert.ma-5(v-else type="error" border="top" colored-border  elevation="2")
+    v-alert.ma-2(v-else type="error" border="top" colored-border  elevation="2")
       | 需連線到網際網路
 </template>
 <script>

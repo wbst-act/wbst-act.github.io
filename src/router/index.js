@@ -24,8 +24,8 @@ const routes = [
     component: () => import('../views/Paths.vue'),
   },
   {
-    path: encodeURI('/實名制個資設定'),
-    name: '實名制個資設定',
+    path: encodeURI('/實聯制個資設定'),
+    name: '實聯制個資設定',
     component: () => import('../views/RealName.vue'),
   },
   {
