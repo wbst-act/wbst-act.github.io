@@ -21,7 +21,7 @@ export default {
         this.refreshing = true
         // Here the actual reload of the page occurs
         window.location.reload()
-        window.location.href = '/2021'
+        window.location.href = '/'
       })
     }
   },

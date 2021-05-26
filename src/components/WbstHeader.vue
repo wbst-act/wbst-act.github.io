@@ -63,7 +63,7 @@ v-app
         v-list-item-content
           v-list-item-title 相關網站
       v-divider
-      v-list-item
+      v-list-item(@click="refresh")
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiClockOutline }}     
         v-list-item-content
@@ -188,6 +188,10 @@ export default {
     },
     async install() {
       this.deferredPrompt.prompt()
+    },
+    refresh() {
+      window.location.reload()
+      window.location.href = '/'
     },
   },
 }

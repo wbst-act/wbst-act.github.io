@@ -11,25 +11,9 @@ v-main
 <script>
 import { mdiArrowLeft } from '@mdi/js'
 export default {
-  name: 'Share',
+  name: 'Einvoice',
   data: () => ({
     icons: { mdiArrowLeft },
   }),
-  computed: {
-    isShare() {
-      return navigator.share ?? false
-    },
-  },
-  methods: {
-    share() {
-      if (navigator.share) {
-        navigator.share({
-          title: '北鳥例行APP',
-          text: '分享北鳥例行 APP',
-          url: 'https://wbst-act.github.io/2021/',
-        })
-      }
-    },
-  },
 }
 </script>

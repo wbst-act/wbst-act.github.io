@@ -1,14 +1,14 @@
 <template lang="pug">
 v-main
-  v-list(flat)
+  v-list(flat nav)
     template(v-for="travel in travels")      
-      v-list-item(:key="travel.name" nav dense :href="travel.url" target="_blank")
+      v-list-item.ma-0.pa-0(link :key="travel.name" nav dense :href="travel.url" target="_blank")
         v-list-item-content.pa-1
           v-alert(border="left" color="yellow" colored-border elevation="2" dense)
             v-container         
               v-row
                 v-col(cols="3" align-self="center") 
-                  | {{ travel.date| moment('YYYY')}}
+                  | {{ travel.date| moment('MM-DD')}}
                 v-col(cols="9") {{ travel.name }}
 </template>
 

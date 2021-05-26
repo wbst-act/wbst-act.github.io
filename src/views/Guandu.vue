@@ -1,8 +1,7 @@
 <template lang="pug">
 v-main
   v-alert.ma-5(type="info" border="top" colored-border  elevation="2") 
-    div 到關渡自然公園賞鳥, 記得紀錄eBird
-    div 選擇熱點"台北關渡IBA--自然公園(Guandu IBA--Nature Park)"
+    .caption 到關渡自然公園賞鳥，記得紀錄eBird，選擇熱點 "台北關渡IBA--自然公園(Guandu IBA--Nature Park)"
   template(v-if="loading")
     v-progress-linear(color='green' indeterminate rounded height="6")
     v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
@@ -16,7 +15,7 @@ v-main
           v-list-item-content
             v-list-item-title 
               | {{ birds[bird.speciesCode].name }}            
-              span.float-right {{ bird.obsDt}}
+              span.float-right.caption {{ bird.obsDt | moment('YYYY-MM-DD')}}
         v-divider
     
     v-alert.ma-5(v-else type="error" border="top" colored-border  elevation="2")

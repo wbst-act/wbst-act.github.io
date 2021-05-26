@@ -3,6 +3,7 @@ v-dialog(v-model="dialog" fullscreen hide-overlay @click:outside="$emit('ebird-c
   template(v-if="loading")
     v-card
       v-toolbar(color="light-green darken-3", dark, dense)
+        v-toolbar-title 連線查詢記錄中...
       v-sheet
         v-progress-linear(color='green' indeterminate rounded height="6")
         v-skeleton-loader(type="list-item, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
@@ -84,9 +85,12 @@ export default {
           headers: { 'X-eBirdApiToken': this.apikey },
         })
         .then(async ret => {
-          this.date = this.$moment(ret.data.creationDt, 'YYYY-MM-DD HH:SS')
+          this.date = this.$moment(ret.data.obsDt, 'YYYY-MM-DD HH:SS')
           this.location = await this.HotspotName(ret.data.locId)
           this.record = ret.data.obs
+        })
+        .catch(() => {
+          this.$emit('ebird-close')
         })
     },
     async HotspotName(locId) {

@@ -18,10 +18,10 @@ v-main
             list-item-two-line, list-item-two-line, \
             list-item-two-line,list-item-two-line, \
             list-item-two-line,list-item-two-line")
-      template(v-else)
-        v-col(cols="12")    
-          template(v-for="item , index in filterevent")
-            v-alert(:key="index" border="left" :color="getcolor(item)" colored-border elevation="2" dense)
+      template(v-else)        
+        template(v-for="item , index in filterevent")
+          v-col(cols="12").ma-0.pa-0
+            v-alert.mx-2(:key="index" border="left" :color="getcolor(item)" colored-border elevation="2" dense)
               v-row(dense no-gutters)
                 v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
                 v-col(cols="10")

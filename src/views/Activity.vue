@@ -18,11 +18,11 @@ v-main
           v-skeleton-loader(type="list-item-two-line, list-item-two-line, list-item-two-line")
       template(v-else)
         v-col(cols="12" v-if="filterevent.length>0").ma-0.pa-0
-          v-list(flat)
+          v-list(flat nav)
             template(v-for="item , index in filterevent")
-              v-list-item(nav @click="eventOpen(item)" dense)
-                v-list-item-content.pa-1
-                  v-alert(:key="index" border="left" :color="item.color" colored-border elevation="2" dense)
+              v-list-item.ma-0.pa-0(@click="eventOpen(item)" dense :key="index")
+                v-alert(border="left" :color="item.color" colored-border elevation="2" dense)
+                  v-container.ma-0.pa-0
                     v-row(dense no-gutters)
                       v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
                       v-col(cols="10")
