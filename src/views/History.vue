@@ -19,11 +19,8 @@ v-main
           v-list-item-avatar(size='28')          
         v-list-item-content
           v-list-item-title
-            | {{ item.location }}
+            | {{ item.name }}
             span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
-          v-list-item-subtitle
-            span.caption {{ item.leader.join(' ')}} 
-            span.caption.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
         v-list-item-action      
           v-icon(color='green' dark) {{ icons.mdiFormatListBulleted }}
       v-list-item(v-else)
@@ -35,12 +32,9 @@ v-main
           v-list-item-title
             | {{ item.location }}
             span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
-          v-list-item-subtitle
-            span.caption {{ item.leader.join(' ')}} 
-            span.caption.float-right(v-if='item.people > 0') 參與 {{ item.people }} 人
         v-list-item-action
       v-divider
-  ebird-dialog(:dialog='dialog' :sid='sid' @ebird-close="dialog=false")
+  ebird-dialog(:dialog='dialog' :event='selectedEvent' @ebird-close="dialog=false")
 </template>
 
 <script>
@@ -54,6 +48,7 @@ export default {
       mdiFormatListBulleted,
     },
     history: [],
+    selectedEvent: null,
     loading: true,
     dialog: false,
     sid: '',
@@ -73,7 +68,7 @@ export default {
                 item['gsx$cancel']['$t'] == ''
             )
             .map(item => ({
-              location: item['gsx$name']['$t'],
+              name: item['gsx$name']['$t'],
               date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
               people: item['gsx$people']['$t'],
               watchbirds: item['gsx$watchbirds']['$t'],
@@ -98,8 +93,8 @@ export default {
   methods: {
     goto(item) {
       if (this.isOnline) {
-        this.sid = item.ebird
-        this.dialog = true
+        this.selectedEvent = item
+        if (this.selectedEvent && this.selectedEvent.ebird) this.dialog = true
       }
     },
   },

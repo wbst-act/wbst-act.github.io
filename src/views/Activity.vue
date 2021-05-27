@@ -1,6 +1,7 @@
 <template lang="pug">
 v-main
   activity-dialog(:selectedOpen="selectedOpen", :selectedEvent="selectedEvent" @close="selectedOpen=false")
+  ebird-dialog(:dialog='ebirdDialog' :event='selectedEvent' @ebird-close="ebirdDialog=false")
   v-container(fluid)
     v-row.fill-height
       v-col(cols="12")
@@ -18,41 +19,60 @@ v-main
           v-skeleton-loader(type="list-item-two-line, list-item-two-line, list-item-two-line")
       template(v-else)
         v-col.ma-0.pa-0(cols="12" v-if="filterevent.length>0")
-          v-list(flat nav)
+          v-list(flat)
             template(v-for="item , index in filterevent")
-              v-list-item.ma-0.pa-0.mb-3(@click="eventOpen(item)" dense :key="index")
-                v-list-item-content.pa-1
-                  v-alert.ma-0.pa-0(border="left" :color="item.color" colored-border elevation="2" dense)
-                    v-container.px-3.py-0
-                      v-row(no-gutters)
-                        v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
-                        v-col(cols="10")
-                          v-list(dense)          
-                            v-list-item
-                              v-list-item-content                  
-                                v-list-item-title            
-                                  | {{ item.name }}
-                                  span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
-                                  span.float-right {{ item.starttime}}
-                                v-list-item-subtitle            
-                                  | {{ item.location }}                               
-                                v-list-item-subtitle
-                                  | {{ item.leader.join(' ') }}                  
+              template(v-if="item.done")
+                v-list-item.ma-0.pa-0.mb-3(@click="ebirdOpen(item)" dense :key="index" :link="item.ebird!=''")
+                  v-list-item-content.pa-1
+                    v-alert.ma-0.pa-0(border="left" :color="item.color" colored-border elevation="2" dense)
+                      v-container.px-3.py-0
+                        v-row(no-gutters)
+                          v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
+                          v-col(cols="10")
+                            v-list(dense) 
+                              v-list-item
+                                v-list-item-content
+                                  v-list-item-title 
+                                    | {{ item.name }}
+                                    span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
+                                v-list-item-action(v-if="item.ebird")
+                                  v-icon(color="green") {{ icons.mdiBird }}
+              template(v-else)
+                v-list-item.ma-0.pa-0.mb-3(@click="eventOpen(item)" dense :key="index")
+                  v-list-item-content.pa-1
+                    v-alert.ma-0.pa-0(border="left" :color="item.color" colored-border elevation="2" dense)
+                      v-container.px-3.py-0
+                        v-row(no-gutters)
+                          v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
+                          v-col(cols="10")
+                            v-list(dense) 
+                              v-list-item
+                                v-list-item-content
+                                  v-list-item-title
+                                    | {{ item.name }}
+                                    span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
+                                    span.float-right {{ item.starttime}}
+                                  v-list-item-subtitle
+                                    | {{ item.location }}
+                                  v-list-item-subtitle
+                                    | {{ item.leader.join(' ') }}
         v-col(cols="12" v-else)
           .d-flex.flex-column.justify-space-between.align-center 尚未安排例行活動,敬請等待
 </template>
 
 <script>
 import ActivityDialog from '@/components/ActivityDialog.vue'
-import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
+import EbirdDialog from '@/components/EbirdDialog.vue'
+import { mdiChevronLeft, mdiChevronRight, mdiBird } from '@mdi/js'
 
 export default {
   name: 'Activity',
-  components: { ActivityDialog },
+  components: { ActivityDialog, EbirdDialog },
   data: () => ({
     icons: {
       mdiChevronLeft,
       mdiChevronRight,
+      mdiBird,
     },
     colors: [
       'teal',
@@ -70,6 +90,8 @@ export default {
     users: [],
     selectedEvent: null,
     selectedOpen: false,
+    sid: '',
+    ebirdDialog: false,
   }),
   created() {
     this.focus = this.$moment(new Date()).day(0)
@@ -130,6 +152,7 @@ export default {
                 this.$moment(),
                 'day'
               ),
+              people: item['gsx$people']['$t'],
             }))
         })
       this.$offlineStorage.set('events', this.events)
@@ -170,7 +193,12 @@ export default {
     },
     eventOpen(event) {
       this.selectedEvent = event
-      this.selectedOpen = true
+      if (this.selectedEvent.cancel != 'y') this.selectedOpen = true
+    },
+    ebirdOpen(item) {
+      this.selectedEvent = item
+      if (this.selectedEvent && this.selectedEvent.ebird)
+        this.ebirdDialog = true
     },
   },
 }

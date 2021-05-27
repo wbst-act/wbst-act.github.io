@@ -5,7 +5,7 @@ v-main
       v-col(cols="12")
         v-sheet
           v-toolbar( flat dense)
-            v-btn(fab, text color="grey darken-2" @click="addDay(-7)")
+            v-btn(fab, text color="grey darken-2" @click="addDay(-7)" v-if="$moment().isBefore($moment(focus).add(-7), 'day')")
               v-icon {{ icons.mdiChevronLeft }}
             v-spacer
             v-toolbar-title {{ $moment(focus).day(6)| moment('Y年M月') }}
@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     addDay(days) {
-      this.focus = this.focus.add(days, 'days')
+      this.focus.add(days, 'days')
       this.getEvent()
     },
     getcolor(item) {

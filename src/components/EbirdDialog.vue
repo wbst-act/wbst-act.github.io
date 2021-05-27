@@ -20,7 +20,7 @@ v-dialog(v-model="dialog" fullscreen hide-overlay @click:outside="$emit('ebird-c
   template(v-else)
     v-card
       v-toolbar(color="light-green darken-3", dark, dense)
-        v-toolbar-title {{ date | moment('YYYY-MM-DD')}}
+        v-toolbar-title {{ date | moment('YYYY-MM-DD')}} {{ event.name }}
         v-spacer
         v-btn(icon @click="$emit('ebird-close')")
           v-icon {{ icons.mdiClose}}
@@ -29,8 +29,14 @@ v-dialog(v-model="dialog" fullscreen hide-overlay @click:outside="$emit('ebird-c
           v-list-item
             v-list-item-content
               v-list-item-title 
-                a(:href="`https://ebird.org/checklist/${sid}`" target="_blank") {{ location}}
-                span.float-right 共{{ getfamily }}科 {{ record.length }}種
+                | {{ event.leader.join(' ')}}
+              v-list-item-subtitle(v-if="event.people > 0 ")
+                | 參與 {{ event.people }} 人
+              v-list-item-subtitle
+                | 共{{ getfamily }}科 {{ record.length }}種
+            v-list-item-action
+              v-btn(:href="`https://ebird.org/checklist/${event.ebird}`" target="_blank" icon)
+                v-icon(color="green") {{ icons.mdiBird }}                
         v-list( dense )
           v-divider
           template(v-for="bird, index in record")
@@ -47,14 +53,13 @@ v-dialog(v-model="dialog" fullscreen hide-overlay @click:outside="$emit('ebird-c
 </template>
 
 <script>
-import { mdiArrowLeft, mdiBird, mdiClose } from '@mdi/js'
+import { mdiBird, mdiClose } from '@mdi/js'
 import { mapState } from 'vuex'
 export default {
   name: 'EbirdDialog',
-  props: ['dialog', 'sid'],
+  props: ['dialog', 'event'],
   data: () => ({
     icons: {
-      mdiArrowLeft,
       mdiBird,
       mdiClose,
     },
@@ -65,9 +70,9 @@ export default {
   watch: {
     async dialog(newValue) {
       if (newValue) {
-        if (this.sid && this.dialog) {
+        if (this.event.ebird && this.dialog) {
           this.loading = true
-          await this.eBird(this.sid)
+          await this.eBird(this.event.ebird)
           this.loading = false
         }
       }
@@ -96,7 +101,7 @@ export default {
         })
         .then(async ret => {
           this.date = this.$moment(ret.data.obsDt, 'YYYY-MM-DD HH:SS')
-          this.location = await this.HotspotName(ret.data.locId)
+          //this.location = await this.HotspotName(ret.data.locId)
           this.record = ret.data.obs
         })
         .catch(() => {
