@@ -14,6 +14,7 @@ export default {
   mixins: [update],
   components: { WbstHeader },
   async mounted() {
+    this.$vuetify.theme.dark = this.$offlineStorage.get('darkmode')
     if (this.isOnline) {
       const version = this.$offlineStorage.get('version')
       const new_version = await this.$http

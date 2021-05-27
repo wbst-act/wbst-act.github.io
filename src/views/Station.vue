@@ -3,8 +3,8 @@ v-main
   v-container(fluid)
     v-row.fill-height
       v-col(cols="12")
-        v-sheet
-          v-toolbar( flat dense)
+        v-card(flat, dense)
+          v-toolbar(flat dense)
             v-btn(fab, text color="grey darken-2" @click="addDay(-7)" v-if="$moment().isBefore($moment(focus).add(-7), 'day')")
               v-icon {{ icons.mdiChevronLeft }}
             v-spacer

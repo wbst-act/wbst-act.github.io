@@ -1,6 +1,6 @@
 <template lang="pug">
 v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
-  ebird-dialog(:dialog='dialog' :sid='sid' @ebird-close="dialog=false")
+  ebird-dialog(:dialog='dialog' :event='selectedEvent' @ebird-close="dialog=false")
   v-card(dense v-if='selectedEvent')
     v-toolbar.white--text(:class="selectedEvent.cancel=='y' ? 'red' :'light-green darken-3'"  dense)
       v-toolbar-title {{ selectedEvent.cancel == 'y' ? '['+selectedEvent.cancelhelp+']' : '' }} {{ selectedEvent.date | moment('MM月DD日 dddd') }} {{selectedEvent.type}}
@@ -64,7 +64,7 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
               v-list
                 v-list-item(v-for="user in users" :key="user.name" link :href="google_form(user.name, user.tel, user.member)" target="_blank")
                   v-list-item-title {{ user.name }}
-          v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
+          v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto" color="primary") 賞鳥記錄
       template(v-if="selectedEvent.ebird!=''")
         v-divider
         v-card-actions
@@ -151,9 +151,8 @@ export default {
             member
         : ''
     },
-    goto(item) {
+    goto() {
       if (this.isOnline) {
-        this.sid = item.ebird
         this.dialog = true
       }
       /*

@@ -1,23 +1,24 @@
 <template lang="pug">
 v-main
-  v-list(flat nav)
-    template(v-for="travel in travels")      
-      v-list-item.ma-0.pa-0(link :key="travel.name" nav dense :href="travel.url" target="_blank")
-        v-list-item-content.pa-1
-          v-alert(border="left" color="yellow" colored-border elevation="2" dense)
-            v-container         
-              v-row
-                v-col(cols="3" align-self="center") 
-                  | {{ travel.date| moment('MM-DD')}}
-                v-col(cols="9") {{ travel.name }}
+  v-container(fluid )
+    template(v-for="travel in travels")
+      v-alert(:key="travel.name" border="left" color="yellow" colored-border elevation="2" dense)
+        v-container         
+          v-row
+            v-col(cols="3") {{ travel.date| moment('MM-DD')}}
+            v-col(cols="7") {{ travel.name }}
+            v-col(cols="2")
+              v-btn(link icon :href="travel.url" target="_blank" )
+                v-icon {{ icons.mdiLogin }}
+                  
 </template>
 
 <script>
-import { mdiStar } from '@mdi/js'
+import { mdiLogin } from '@mdi/js'
 export default {
   name: 'Travel',
   data: () => ({
-    icons: { mdiStar },
+    icons: { mdiLogin },
     travels: [],
   }),
   mounted() {

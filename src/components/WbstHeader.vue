@@ -63,6 +63,12 @@ v-app
         v-list-item-content
           v-list-item-title 相關網站
       v-divider
+      v-list-item
+        v-list-item-avatar(size="24")
+          v-icon {{ icons.mdiBrightness4 }}     
+        v-list-item-content
+          v-list-item-title
+            v-switch.ml-3(v-model="darkmode" @change="changemode" inset label="深色模式" dense)
       v-list-item(@click="refresh")
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiClockOutline }}     
@@ -71,9 +77,8 @@ v-app
             | 編譯時間 {{ builddate }}
 
   v-app-bar(app, 
-    color="light-green darken-3",
-    dark,
-    dense, 
+    color="light-green darken-3", 
+    dense, dark,
     :clipped-left="$vuetify.breakpoint.lgAndUp")
     v-app-bar-nav-icon(@click.stop="drawer =! drawer")
     v-toolbar-title {{ title }}
@@ -114,6 +119,7 @@ import {
   mdiPineTree,
   mdiExportVariant,
   mdiPlusBoxOutline,
+  mdiBrightness4,
 } from '@mdi/js'
 
 export default {
@@ -135,12 +141,14 @@ export default {
       mdiPineTree,
       mdiExportVariant,
       mdiPlusBoxOutline,
+      mdiBrightness4,
     },
     drawer: false,
     builddate: '',
     deferredPrompt: null,
     installed: false,
     iosinstall: false,
+    darkmode: false,
   }),
   computed: {
     title() {
@@ -162,6 +170,7 @@ export default {
     },
   },
   created() {
+    this.darkmode = this.$offlineStorage.get('darkmode')
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault()
       if (this.$cookies.get('add-to-home-screen') == undefined) {
@@ -192,6 +201,10 @@ export default {
     refresh() {
       window.location.reload()
       window.location.href = '/'
+    },
+    changemode() {
+      this.$offlineStorage.set('darkmode', this.darkmode)
+      this.$vuetify.theme.dark = this.darkmode
     },
   },
 }
