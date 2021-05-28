@@ -4,7 +4,7 @@ v-app
       v-model="drawer",
       :clipped="$vuetify.breakpoint.lgAndUp")
     v-list( nav, dense )
-      v-list-item(:to="{name: '台北鳥會例行活動'}")
+      v-list-item(:to="{name: '回首頁'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiCalendar}}          
         v-list-item-content

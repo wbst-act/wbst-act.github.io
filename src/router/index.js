@@ -6,12 +6,13 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: encodeURI('/台北鳥會例行活動'),
-  },
-  {
-    path: encodeURI('/台北鳥會例行活動'),
     name: '台北鳥會例行活動',
     component: () => import('../views/Activity.vue'),
+  },
+  {
+    path: encodeURI('/回首頁'),
+    name: '回首頁',
+    redirect: '/',
   },
   {
     path: encodeURI('/歷史記錄查詢'),
