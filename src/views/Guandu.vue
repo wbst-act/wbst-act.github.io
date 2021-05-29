@@ -6,7 +6,7 @@ v-main
     v-progress-linear(color='green' indeterminate rounded height="6")
     v-skeleton-loader(type="list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar")
   template(v-else)
-    v-list( dense v-if="record.length>0" )
+    v-list(v-if="record.length>0" )
       v-divider
       template(v-for="bird, index in record")
         v-list-item( :key="bird.speciesCode")

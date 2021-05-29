@@ -3,7 +3,7 @@ v-app
   v-navigation-drawer(app, 
       v-model="drawer",
       :clipped="$vuetify.breakpoint.lgAndUp")
-    v-list( nav, dense )
+    v-list( nav )
       v-list-item(:to="{name: '回首頁'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiCalendar}}          

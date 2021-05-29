@@ -24,7 +24,7 @@ v-main
                 v-row(no-gutters)
                   v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
                   v-col(cols="10")
-                    v-list(dense) 
+                    v-list
                       v-list-item
                         v-list-item-content
                           v-list-item-title 
@@ -39,15 +39,15 @@ v-main
                 v-row(no-gutters)
                   v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
                   v-col(cols="10")
-                    v-list(dense) 
+                    v-list
                       v-list-item
                         v-list-item-content
                           v-list-item-title
                             | {{ item.name }}
-                            span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
-                            span.float-right {{ item.starttime}}
+                            span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]                            
                           v-list-item-subtitle
                             | {{ item.location }}
+                            span.float-right {{ item.starttime}}
                           v-list-item-subtitle
                             | {{ item.leader.join(' ') }}
 

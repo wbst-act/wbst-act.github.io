@@ -1,6 +1,6 @@
 <template lang="pug">
 v-main
-  v-list( dense )
+  v-list(  )
     template(v-for="item in paths" )
       v-list-item(v-if="item.locid!='' && isOnline" link :href="'https://ebird.org/hotspot/'+item.locid", target="_blank" :key="item.name")
         v-list-item-avatar(size="24")
@@ -8,8 +8,10 @@ v-main
         v-list-item-content
           v-list-item-title
             | {{ item.name }}            
-            span.float-right {{ item.location }} {{ item.time}}
-          v-list-item-subtitle  {{ item.ebirdname }}             
+          v-list-item-subtitle 
+            | {{ item.location }} 
+            span.float-right {{ item.time}}
+          v-list-item-subtitle {{ item.ebirdname }}             
         
       v-list-item(v-else :key="item.name")
         v-list-item-avatar(size="24")

@@ -1,6 +1,6 @@
 <template lang="pug">
 v-main
-  v-list(dense)
+  v-list
     template(v-for="site in sites")
       v-list-item(:key="site.name" link :href="site.url" target="_blank")
         v-list-item-avatar(size="24")
