@@ -44,6 +44,7 @@ v-main
                         v-list-item-content
                           v-list-item-title
                             | {{ item.name }}
+                            span(v-if="item.memberonly=='y'") (會員限定場，需事先報名)
                             span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]                            
                           v-list-item-subtitle
                             | {{ item.location }}
@@ -52,62 +53,6 @@ v-main
                             | {{ item.leader.join(' ') }}
 
 
-    //
-      v-row.fill-height
-        v-col(cols="12")
-          v-sheet
-            v-toolbar(flat dense)
-              v-btn(fab, text color="grey darken-2" @click="addDay(-7)")
-                v-icon {{ icons.mdiChevronLeft }}
-              v-spacer
-              v-toolbar-title {{ $moment(focus).day(6)| moment('Y年M月') }}
-              v-spacer
-              v-btn(fab, text  color="grey darken-2" @click="addDay(7)")
-                v-icon {{ icons.mdiChevronRight }}
-        template(v-if="loading")
-          v-col(cols="12")
-            v-skeleton-loader(type="list-item-two-line, list-item-two-line, list-item-two-line")
-        template(v-else)
-          v-col.ma-0.pa-0(cols="12" v-if="filterevent.length>0")
-            v-list(flat)
-              template(v-for="item , index in filterevent")
-                template(v-if="item.done")
-                  v-list-item.ma-0.pa-0.mb-3(@click="ebirdOpen(item)" dense :key="index" :link="item.ebird!=''")
-                    v-list-item-content.pa-1
-                      v-alert.ma-0.pa-0(border="left" :color="item.color" colored-border elevation="2" dense)
-                        v-container.px-3.py-0
-                          v-row(no-gutters)
-                            v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
-                            v-col(cols="10")
-                              v-list(dense) 
-                                v-list-item
-                                  v-list-item-content
-                                    v-list-item-title 
-                                      | {{ item.name }}
-                                      span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
-                                  v-list-item-action(v-if="item.ebird")
-                                    v-icon(color="green") {{ icons.mdiBird }}
-                template(v-else)
-                  v-list-item.ma-0.pa-0.mb-3(@click="eventOpen(item)" dense :key="index")
-                    v-list-item-content.pa-1
-                      v-alert.ma-0.pa-0(border="left" :color="item.color" colored-border elevation="2" dense)
-                        v-container.px-3.py-0
-                          v-row(no-gutters)
-                            v-col(cols="2" align-self="center") {{ item.date | moment('D') }} [{{ item.date | moment('dd') }}]
-                            v-col(cols="10")
-                              v-list(dense) 
-                                v-list-item
-                                  v-list-item-content
-                                    v-list-item-title
-                                      | {{ item.name }}
-                                      span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
-                                      span.float-right {{ item.starttime}}
-                                    v-list-item-subtitle
-                                      | {{ item.location }}
-                                    v-list-item-subtitle
-                                      | {{ item.leader.join(' ') }}
-          v-col(cols="12" v-else)
-            .d-flex.flex-column.justify-space-between.align-center 尚未安排例行活動,敬請等待
 </template>
 
 <script>
@@ -198,6 +143,8 @@ export default {
               ebird: item['gsx$ebird']['$t'],
               cancel: item['gsx$cancel']['$t'],
               cancelhelp: item['gsx$cancelhelp']['$t'],
+              memberonly: item['gsx$memberonly']['$t'],
+              memberurl: item['gsx$memberurl']['$t'],
               today: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isSame(
                 this.$moment(),
                 'day'

@@ -61,6 +61,8 @@ export default {
           const paths = ret.data.feed.entry.map(item => ({
             name: item['gsx$name']['$t'],
             location: item['gsx$location']['$t'],
+            bus: item['gsx$bus']['$t'],
+            pluscode: item['gsx$pluscode']['$t'],
             time: item['gsx$starttime']['$t'],
             ebirdname: item['gsx$ebirdname']['$t'],
             locid: item['gsx$hotspot']['$t'],

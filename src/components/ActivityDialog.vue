@@ -13,12 +13,16 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
           v-list-item
             v-list-item-content
               v-list-item-title 路線
-              v-list-item-subtitle {{ selectedEvent.name }}
+              v-list-item-subtitle 
+                | {{ selectedEvent.name }}
+                span(v-if="selectedEvent.memberonly") (會員限定場，需事先報名)
         template(v-else)
           v-list-item(link :href='ebird_hotspot' target="_blank")
             v-list-item-content
               v-list-item-title 路線
-              v-list-item-subtitle {{ selectedEvent.name }}
+              v-list-item-subtitle
+                | {{ selectedEvent.name }}
+                span(v-if="selectedEvent.memberonly") (會員限定場，需事先報名)
             v-list-item-action
               v-icon(color="green" icon ) {{icons.mdiBird }}
         template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
@@ -49,6 +53,11 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
           v-list-item-content
             v-list-item-title 領隊
             v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
+        v-list-item(v-if="selectedEvent.memberonly=='y'" link :href="selectedEvent.memberurl")
+          v-list-item-content
+            v-list-item-title 報名網址
+            v-list-item-subtitle(v-if="selectedEvent.memberurl") {{ selectedEvent.memberurl }}
+            v-list-item-subtitle(v-else) 尚未開始報名
       //template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")
       template(v-if="selectedEvent.done==false")
         v-divider
@@ -95,11 +104,27 @@ export default {
     this.users = this.$offlineStorage.get('users') ?? []
     this.paths = this.$offlineStorage.get('paths') ?? []
   },
+
   computed: {
+    date() {
+      return this.$moment(this.selectedEvent.date, 'YYYY/MM/DD')
+    },
+    newlocation() {
+      return this.date.isBefore(this.$moment('2021/07/01', 'YYYY/MM/DD'), 'day')
+    },
     google_map() {
-      return this.isOnline
-        ? 'https://maps.google.com/?q=' + this.selectedEvent.location
-        : ''
+      if (this.isOnline) {
+        if (this.newlocation) {
+          return 'https://maps.google.com/?q=' + this.selectedEvent.location
+        } else {
+          const pluscode = this.paths.find(
+            item => item.name == this.selectedEvent.name
+          ).pluscode
+          return 'https://maps.google.com/?q=' + encodeURIComponent(pluscode)
+        }
+      } else {
+        return ''
+      }
     },
     google_calendar() {
       const dates =
@@ -110,6 +135,12 @@ export default {
         this.$moment(this.selectedEvent.end, 'YYYY-MM-DDTHH:mm').format(
           'YYYYMMDDTHHmmSS'
         )
+      const location = this.newlocation
+        ? this.selectedEvent.location
+        : encodeURIComponent(
+            this.paths.find(item => item.name == this.selectedEvent.name)
+              .pluscode
+          )
 
       return this.isOnline
         ? 'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=' +
@@ -117,9 +148,16 @@ export default {
             '&text=' +
             this.selectedEvent.name +
             '&location=' +
-            this.selectedEvent.location +
-            '&details=領隊:' +
-            this.selectedEvent.leader.join(' ')
+            location +
+            '&details=' +
+            encodeURIComponent(
+              '集合地點:' +
+                this.selectedEvent.location +
+                '\n' +
+                (this.selectedEvent.bus ? this.selectedEvent.bus + '\n' : '') +
+                '領隊:' +
+                this.selectedEvent.leader.join(' ')
+            )
         : ''
     },
     ebird_hotspot() {

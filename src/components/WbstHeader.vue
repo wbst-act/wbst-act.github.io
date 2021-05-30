@@ -74,7 +74,8 @@ v-app
           v-icon {{ icons.mdiClockOutline }}     
         v-list-item-content
           v-list-item-subtitle
-            | 編譯時間 {{ builddate }}
+            | 編譯時間 
+          v-list-item-subtitle.text-caption {{ builddate }}
 
   v-app-bar(app, 
     color="light-green darken-3", 
@@ -199,6 +200,7 @@ export default {
       this.deferredPrompt.prompt()
     },
     refresh() {
+      this.$offlineStorage.set('version', '')
       window.location.reload()
       window.location.href = '/'
     },
