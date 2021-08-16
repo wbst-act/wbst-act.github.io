@@ -58,16 +58,17 @@ export default {
   methods: {
     async eBirdHotspot() {
       if (this.isOnline) {
-        return await this.$http
-          .get(
+        try {
+          const ret = await this.$http.get(
             'https://api.ebird.org/v2/data/obs/L2329696/recent?back=30&hotspot=true',
             {
               headers: { 'X-eBirdApiToken': this.apikey },
             }
           )
-          .then(async ret => {
-            this.record = ret.data
-          })
+          this.record = ret.data
+        } catch (err) {
+          console.log('關渡', err)
+        }
       } else {
         this.record = []
         return

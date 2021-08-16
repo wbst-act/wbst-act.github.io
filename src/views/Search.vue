@@ -33,53 +33,58 @@ v-main
 
 <script>
 import { mdiCalendarPlus } from '@mdi/js'
+import sheet from '@/mixins/sheet'
 export default {
   name: 'Search',
+  mixins: [sheet],
   data: () => ({
     icons: { mdiCalendarPlus },
     allschedule: [],
     schedules: [],
     search_words: '',
     all: false,
+    paths: [],
   }),
   async mounted() {
     if (this.isOnline) {
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
-        )
-        .then(ret => {
-          this.allschedule = ret.data.feed.entry.map(item => ({
-            type: item['gsx$type']['$t'],
-            name: item['gsx$name']['$t'],
-            date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-            starttime: item['gsx$starttime']['$t'],
-            endtime: item['gsx$endtime']['$t'],
-            location: item['gsx$location']['$t'],
-            p1: item['gsx$p1']['$t'],
-            p2: item['gsx$p2']['$t'],
-            p3: item['gsx$p3']['$t'],
-            p4: item['gsx$p4']['$t'],
-            start:
-              item['gsx$date']['$t'].replaceAll('/', '-') +
-              'T' +
-              item['gsx$starttime']['$t'],
-            end:
-              item['gsx$date']['$t'].replaceAll('/', '-') +
-              'T' +
-              item['gsx$endtime']['$t'],
-            done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
-              this.$moment(),
-              'day'
-            ),
-            cancel: item['gsx$cancel']['$t'],
-            cancelhelp: item['gsx$cancelhelp']['$t'],
-          }))
-        })
-      this.$offlineStorage.set('schedules', this.events)
+      try {
+        const ret = await this.$http.get(this.sheet_url(1))
+
+        this.allschedule = ret.data.feed.entry.map(item => ({
+          type: item['gsx$type']['$t'],
+          name: item['gsx$name']['$t'],
+          date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
+          starttime: item['gsx$starttime']['$t'],
+          endtime: item['gsx$endtime']['$t'],
+          location: item['gsx$location']['$t'],
+          p1: item['gsx$p1']['$t'],
+          p2: item['gsx$p2']['$t'],
+          p3: item['gsx$p3']['$t'],
+          p4: item['gsx$p4']['$t'],
+          start:
+            item['gsx$date']['$t'].replaceAll('/', '-') +
+            'T' +
+            item['gsx$starttime']['$t'],
+          end:
+            item['gsx$date']['$t'].replaceAll('/', '-') +
+            'T' +
+            item['gsx$endtime']['$t'],
+          done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
+            this.$moment(),
+            'day'
+          ),
+          cancel: item['gsx$cancel']['$t'],
+          cancelhelp: item['gsx$cancelhelp']['$t'],
+        }))
+        this.$offlineStorage.set('schedules', this.events)
+      } catch (err) {
+        console.log('search', err)
+        this.allschedule = this.$offlineStorage.get('schedules')
+      }
     } else {
       this.allschedule = this.$offlineStorage.get('schedules')
     }
+    this.paths = this.$offlineStorage.get('paths') ?? []
   },
   methods: {
     filter() {
@@ -117,14 +122,33 @@ export default {
         this.$moment(item.start, 'YYYY-MM-DDTHH:mm').format('YYYYMMDDTHHmmSS') +
         '%2F' +
         this.$moment(item.end, 'YYYY-MM-DDTHH:mm').format('YYYYMMDDTHHmmSS')
+      let location = ''
+      if (['例行', '周末派', '白頭翁'].includes(item.type)) {
+        if (
+          this.$moment(item.date).isBefore(
+            this.$moment('2021/07/01', 'YYYY/MM/DD'),
+            'day'
+          )
+        ) {
+          location = item.location
+        } else {
+          location = encodeURIComponent(
+            this.paths.find(path => path.name == item.name).pluscode
+          )
+        }
+      }
 
       return (
         'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=' +
         dates +
         '&text=' +
         item.name +
-        (item.location != '' ? '&location=' + item.location : '') +
-        '&details=領隊:' +
+        (location != '' ? '&location=' + location : '') +
+        '&details=' +
+        encodeURIComponent(
+          item.location != '' ? '集合地點:' + item.location + '\n' : ''
+        ) +
+        '領隊:' +
         item.p1 +
         ' ' +
         item.p2 +

@@ -8,92 +8,95 @@
 </template>
 <script>
 import update from '@/mixins/update'
+import sheet from '@/mixins/sheet'
 import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'App',
-  mixins: [update],
+  mixins: [update, sheet],
   components: { WbstHeader },
   async mounted() {
     this.$vuetify.theme.dark = this.$offlineStorage.get('darkmode')
     if (this.isOnline) {
       const version = this.$offlineStorage.get('version')
-      const new_version = await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/6/public/full?alt=json'
-        )
-        .then(ret => {
-          return ret.data.feed.entry[0]['gsx$version']['$t']
-        })
-      if (new_version != version) {
-        await this.update()
-        this.$offlineStorage.set('version', new_version)
+      try {
+        const ret = await this.$http.get(this.sheet_url(6))
+        const new_version = ret.data.feed.entry[0]['gsx$version']['$t']
+        if (new_version != version) {
+          await this.update()
+          this.$offlineStorage.set('version', new_version)
+        }
+      } catch (err) {
+        console.log('version', err)
       }
     }
   },
   methods: {
     async update() {
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/3/public/full?alt=json'
-        )
-        .then(ret => {
-          const birds = ret.data.feed.entry
-            .map(item => ({
-              speccode: item['gsx$speciescode']['$t'],
-              birdname: item['gsx$commonname']['$t'],
-              family: item['gsx$family']['$t'],
-            }))
-            .reduce((result, item) => {
-              result[item['speccode']] = {
-                name: item['birdname'],
-                family: item['family'],
-              }
-              return result
-            })
-          this.$offlineStorage.set('birds', birds)
-        })
+      // ebird bird data
+      try {
+        const ret = await this.$http.get(this.sheet_url(3))
 
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/2/public/full?alt=json'
-        )
-        .then(ret => {
-          const paths = ret.data.feed.entry.map(item => ({
-            name: item['gsx$name']['$t'],
-            location: item['gsx$location']['$t'],
-            bus: item['gsx$bus']['$t'],
-            pluscode: item['gsx$pluscode']['$t'],
-            time: item['gsx$starttime']['$t'],
-            ebirdname: item['gsx$ebirdname']['$t'],
-            locid: item['gsx$hotspot']['$t'],
+        const birds = ret.data.feed.entry
+          .map(item => ({
+            speccode: item['gsx$speciescode']['$t'],
+            birdname: item['gsx$commonname']['$t'],
+            family: item['gsx$family']['$t'],
           }))
-          this.$offlineStorage.set('paths', paths)
-        })
+          .reduce((result, item) => {
+            result[item['speccode']] = {
+              name: item['birdname'],
+              family: item['family'],
+            }
+            return result
+          })
+        this.$offlineStorage.set('birds', birds)
+      } catch (err) {
+        console.log('ebird鳥名錄', err)
+      }
 
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/4/public/full?alt=json'
-        )
-        .then(ret => {
-          const sites = ret.data.feed.entry.map(item => ({
-            name: item['gsx$name']['$t'],
-            url: item['gsx$url']['$t'],
-          }))
-          this.$offlineStorage.set('sites', sites)
-        })
+      // 例行路線
+      try {
+        const ret = await this.$http.get(this.sheet_url(2))
 
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/5/public/full?alt=json'
-        )
-        .then(ret => {
-          const travels = ret.data.feed.entry.map(item => ({
-            date: item['gsx$date']['$t'],
-            name: item['gsx$name']['$t'],
-            url: item['gsx$url']['$t'],
-          }))
-          this.$offlineStorage.set('travels', travels)
-        })
+        const paths = ret.data.feed.entry.map(item => ({
+          name: item['gsx$name']['$t'],
+          location: item['gsx$location']['$t'],
+          bus: item['gsx$bus']['$t'],
+          pluscode: item['gsx$pluscode']['$t'],
+          time: item['gsx$starttime']['$t'],
+          ebirdname: item['gsx$ebirdname']['$t'],
+          locid: item['gsx$hotspot']['$t'],
+        }))
+        this.$offlineStorage.set('paths', paths)
+      } catch (err) {
+        console.log('例行路線', err)
+      }
+      //相關網站
+      try {
+        const ret = await this.$http.get(this.sheet_url(4))
+
+        const sites = ret.data.feed.entry.map(item => ({
+          name: item['gsx$name']['$t'],
+          url: item['gsx$url']['$t'],
+        }))
+        this.$offlineStorage.set('sites', sites)
+      } catch (err) {
+        console.log('相關網站', err)
+      }
+
+      //大型活動
+      try {
+        const ret = await this.$http.get(this.sheet_url(5))
+
+        const travels = ret.data.feed.entry.map(item => ({
+          date: item['gsx$date']['$t'],
+          name: item['gsx$name']['$t'],
+          url: item['gsx$url']['$t'],
+        }))
+        this.$offlineStorage.set('travels', travels)
+      } catch (err) {
+        console.log('相關網站', err)
+      }
     },
   },
 }

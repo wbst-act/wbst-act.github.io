@@ -40,8 +40,10 @@ v-main
 <script>
 import { mdiFormatListBulleted } from '@mdi/js'
 import EbirdDialog from '@/components/EbirdDialog.vue'
+import sheet from '@/mixins/sheet'
 export default {
   name: 'History',
+  mixins: [sheet],
   components: { EbirdDialog },
   data: () => ({
     icons: {
@@ -56,35 +58,34 @@ export default {
   async mounted() {
     this.loading = true
     if (this.isOnline) {
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
-        )
-        .then(ret => {
-          const data = ret.data.feed.entry
-            .filter(
-              item =>
-                ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t']) &&
-                item['gsx$cancel']['$t'] == ''
-            )
-            .map(item => ({
-              name: item['gsx$name']['$t'],
-              date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-              people: item['gsx$people']['$t'],
-              watchbirds: item['gsx$watchbirds']['$t'],
-              ebird: item['gsx$ebird']['$t'],
-              leader: [
-                item['gsx$p1']['$t'],
-                item['gsx$p2']['$t'],
-                item['gsx$p3']['$t'],
-                item['gsx$p4']['$t'],
-              ],
-            }))
-          this.history = data
-            .filter(item => item.date < this.$moment())
-            .reverse()
-        })
-      this.$offlineStorage.set('history', this.history)
+      try {
+        const ret = await this.$http.get(this.sheet_url(1))
+
+        const data = ret.data.feed.entry
+          .filter(
+            item =>
+              ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t']) &&
+              item['gsx$cancel']['$t'] == ''
+          )
+          .map(item => ({
+            name: item['gsx$name']['$t'],
+            date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
+            people: item['gsx$people']['$t'],
+            watchbirds: item['gsx$watchbirds']['$t'],
+            ebird: item['gsx$ebird']['$t'],
+            leader: [
+              item['gsx$p1']['$t'],
+              item['gsx$p2']['$t'],
+              item['gsx$p3']['$t'],
+              item['gsx$p4']['$t'],
+            ],
+          }))
+        this.history = data.filter(item => item.date < this.$moment()).reverse()
+        this.$offlineStorage.set('history', this.history)
+      } catch (err) {
+        console.log('歷史記錄', err)
+        this.history = this.$offlineStorage.get('history')
+      }
     } else {
       this.history = this.$offlineStorage.get('history')
     }

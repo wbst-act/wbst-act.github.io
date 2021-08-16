@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    apikey:'1vrj7j72ob38'
+    apikey: '1vrj7j72ob38',
   },
   mutations: {},
   actions: {},

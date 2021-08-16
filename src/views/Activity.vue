@@ -59,9 +59,10 @@ v-main
 import ActivityDialog from '@/components/ActivityDialog.vue'
 import EbirdDialog from '@/components/EbirdDialog.vue'
 import { mdiChevronLeft, mdiChevronRight, mdiBird } from '@mdi/js'
-
+import sheet from '@/mixins/sheet'
 export default {
   name: 'Activity',
+  mixins: [sheet],
   components: { ActivityDialog, EbirdDialog },
   data: () => ({
     icons: {
@@ -95,64 +96,66 @@ export default {
     this.loading = true
     this.users = this.$offlineStorage.get('users')
     if (this.isOnline) {
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
-        )
-        .then(ret => {
-          this.events = ret.data.feed.entry
-            .filter(item =>
-              ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t'])
-            )
-            .map(item => ({
-              type: item['gsx$type']['$t'],
-              name: item['gsx$name']['$t'],
-              date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-              starttime: item['gsx$starttime']['$t'],
-              endtime: item['gsx$endtime']['$t'],
-              location: item['gsx$location']['$t'],
-              leader: [
-                item['gsx$p1']['$t'],
-                item['gsx$p2']['$t'],
-                item['gsx$p3']['$t'],
-                item['gsx$p4']['$t'],
-              ],
-              start:
-                item['gsx$date']['$t'].replaceAll('/', '-') +
-                'T' +
-                item['gsx$starttime']['$t'],
-              end:
-                item['gsx$date']['$t'].replaceAll('/', '-') +
-                'T' +
-                item['gsx$endtime']['$t'],
-              done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
+      try {
+        const ret = await this.$http.get(this.sheet_url(1))
+
+        this.events = ret.data.feed.entry
+          .filter(item =>
+            ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t'])
+          )
+          .map(item => ({
+            type: item['gsx$type']['$t'],
+            name: item['gsx$name']['$t'],
+            date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
+            starttime: item['gsx$starttime']['$t'],
+            endtime: item['gsx$endtime']['$t'],
+            location: item['gsx$location']['$t'],
+            leader: [
+              item['gsx$p1']['$t'],
+              item['gsx$p2']['$t'],
+              item['gsx$p3']['$t'],
+              item['gsx$p4']['$t'],
+            ],
+            start:
+              item['gsx$date']['$t'].replaceAll('/', '-') +
+              'T' +
+              item['gsx$starttime']['$t'],
+            end:
+              item['gsx$date']['$t'].replaceAll('/', '-') +
+              'T' +
+              item['gsx$endtime']['$t'],
+            done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
+              this.$moment(),
+              'day'
+            ),
+            color: this.colors[
+              this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
                 this.$moment(),
                 'day'
-              ),
-              color: this.colors[
-                this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
-                  this.$moment(),
-                  'day'
-                )
-                  ? 5
-                  : item['gsx$cancel']['$t'] == 'y'
-                  ? 1
-                  : this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').weekday()
-              ],
-              bus: item['gsx$bus']['$t'],
-              ebird: item['gsx$ebird']['$t'],
-              cancel: item['gsx$cancel']['$t'],
-              cancelhelp: item['gsx$cancelhelp']['$t'],
-              memberonly: item['gsx$memberonly']['$t'],
-              memberurl: item['gsx$memberurl']['$t'],
-              today: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isSame(
-                this.$moment(),
-                'day'
-              ),
-              people: item['gsx$people']['$t'],
-            }))
-        })
-      this.$offlineStorage.set('events', this.events)
+              )
+                ? 5
+                : item['gsx$cancel']['$t'] == 'y'
+                ? 1
+                : this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').weekday()
+            ],
+            bus: item['gsx$bus']['$t'],
+            ebird: item['gsx$ebird']['$t'],
+            cancel: item['gsx$cancel']['$t'],
+            cancelhelp: item['gsx$cancelhelp']['$t'],
+            memberonly: item['gsx$memberonly']['$t'],
+            memberurl: item['gsx$memberurl']['$t'],
+            today: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isSame(
+              this.$moment(),
+              'day'
+            ),
+            people: item['gsx$people']['$t'],
+          }))
+
+        this.$offlineStorage.set('events', this.events)
+      } catch (err) {
+        console.log('例行', err)
+        this.events = this.$offlineStorage.get('events')
+      }
     } else {
       this.events = this.$offlineStorage.get('events')
     }

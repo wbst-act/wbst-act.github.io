@@ -45,9 +45,10 @@ import {
   mdiCalendarPlus,
   mdiGoogleMaps,
 } from '@mdi/js'
-
+import sheet from '@/mixins/sheet'
 export default {
   name: 'Station',
+  mixins: [sheet],
   data: () => ({
     icons: {
       mdiMenuDown,
@@ -68,29 +69,31 @@ export default {
   async mounted() {
     this.loading = true
     if (this.isOnline) {
-      await this.$http
-        .get(
-          'https://spreadsheets.google.com/feeds/list/1H88Qx_-1OeZOOnsU2Bmmg-m2-XtBti05oCo9UggD3Sg/1/public/full?alt=json'
-        )
-        .then(ret => {
-          this.events = ret.data.feed.entry
-            .filter(item => ['駐站', '賞鳥趣'].includes(item['gsx$type']['$t']))
-            .map(item => ({
-              type: item['gsx$type']['$t'],
-              name: item['gsx$name']['$t'],
-              date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-              starttime: item['gsx$starttime']['$t'],
-              endtime: item['gsx$endtime']['$t'],
-              leader: [item['gsx$p1']['$t'], item['gsx$p2']['$t']],
-              done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
-                this.$moment(),
-                'day'
-              ),
-              cancel: item['gsx$cancel']['$t'],
-              cancelhelp: item['gsx$cancelhelp']['$t'],
-            }))
-        })
-      this.$offlineStorage.set('stations', this.events)
+      try {
+        const ret = await this.$http.get(this.sheet_url(1))
+
+        this.events = ret.data.feed.entry
+          .filter(item => ['駐站', '賞鳥趣'].includes(item['gsx$type']['$t']))
+          .map(item => ({
+            type: item['gsx$type']['$t'],
+            name: item['gsx$name']['$t'],
+            date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
+            starttime: item['gsx$starttime']['$t'],
+            endtime: item['gsx$endtime']['$t'],
+            leader: [item['gsx$p1']['$t'], item['gsx$p2']['$t']],
+            done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
+              this.$moment(),
+              'day'
+            ),
+            cancel: item['gsx$cancel']['$t'],
+            cancelhelp: item['gsx$cancelhelp']['$t'],
+          }))
+
+        this.$offlineStorage.set('stations', this.events)
+      } catch (err) {
+        console.log('駐站', err)
+        this.events = this.$offlineStorage.get('stations')
+      }
     } else {
       this.events = this.$offlineStorage.get('stations')
     }
