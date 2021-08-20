@@ -49,7 +49,28 @@ export default {
     if (this.isOnline) {
       try {
         const ret = await this.$http.get(this.sheet_url(1))
-
+        const data = this.sheet_format(ret.data.values)
+        this.allschedule = data.map(item => ({
+          type: item.type,
+          name: item.name,
+          date: this.$moment(item.date, 'YYYY/MM/DD'),
+          starttime: item.starttime,
+          endtime: item.endtime,
+          location: item.location,
+          p1: item.p1,
+          p2: item.p2,
+          p3: item.p3,
+          p4: item.p4,
+          start: item.date.replaceAll('/', '-') + 'T ' + item.starttime,
+          end: item.date.replaceAll('/', '-') + 'T ' + item.endtime,
+          done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+            this.$moment(),
+            'day'
+          ),
+          cancel: item.cancel,
+          cancelhelp: item.cancel_help,
+        }))
+        /*
         this.allschedule = ret.data.feed.entry.map(item => ({
           type: item['gsx$type']['$t'],
           name: item['gsx$name']['$t'],
@@ -76,6 +97,7 @@ export default {
           cancel: item['gsx$cancel']['$t'],
           cancelhelp: item['gsx$cancelhelp']['$t'],
         }))
+        */
         this.$offlineStorage.set('schedules', this.events)
       } catch (err) {
         console.log('search', err)

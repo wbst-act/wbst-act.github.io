@@ -98,7 +98,48 @@ export default {
     if (this.isOnline) {
       try {
         const ret = await this.$http.get(this.sheet_url(1))
-
+        const data = this.sheet_format(ret.data.values)
+        //console.log(data)
+        this.events = data
+          .filter(item => ['例行', '周末派', '白頭翁'].includes(item.type))
+          .map(item => ({
+            type: item.type,
+            name: item.name,
+            date: this.$moment(item.date, 'YYYY/MM/DD'),
+            starttime: item.starttime,
+            endtime: item.endtime,
+            location: item.location,
+            leader: [item.p1, item.p2, item.p3, item.p4],
+            start: item.date.replaceAll('/', '-') + 'T ' + item.starttime,
+            end: item.date.replaceAll('/', '-') + 'T ' + item.endtime,
+            done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+              this.$moment(),
+              'day'
+            ),
+            color: this.colors[
+              this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+                this.$moment(),
+                'day'
+              )
+                ? 5
+                : item.date == 'y'
+                ? 1
+                : this.$moment(item.date, 'YYYY/MM/DD').weekday()
+            ],
+            bus: item.bus,
+            ebird: item.ebird,
+            cancel: item.cancel,
+            cancelhelp: item.cancel_help,
+            memberonly: item.member_only,
+            memberurl: item.member_url,
+            today: this.$moment(item.date, 'YYYY/MM/DD').isSame(
+              this.$moment(),
+              'day'
+            ),
+            people: item.people,
+          }))
+        //console.log(this.events)
+        /*
         this.events = ret.data.feed.entry
           .filter(item =>
             ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t'])
@@ -150,7 +191,7 @@ export default {
             ),
             people: item['gsx$people']['$t'],
           }))
-
+          */
         this.$offlineStorage.set('events', this.events)
       } catch (err) {
         console.log('例行', err)

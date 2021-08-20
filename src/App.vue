@@ -20,7 +20,8 @@ export default {
       const version = this.$offlineStorage.get('version')
       try {
         const ret = await this.$http.get(this.sheet_url(6))
-        const new_version = ret.data.feed.entry[0]['gsx$version']['$t']
+        const data = this.sheet_format(ret.data.values)
+        const new_version = data[0].version
         if (new_version != version) {
           await this.update()
           this.$offlineStorage.set('version', new_version)
@@ -35,12 +36,12 @@ export default {
       // ebird bird data
       try {
         const ret = await this.$http.get(this.sheet_url(3))
-
-        const birds = ret.data.feed.entry
+        const data = this.sheet_format(ret.data.values)
+        const birds = data
           .map(item => ({
-            speccode: item['gsx$speciescode']['$t'],
-            birdname: item['gsx$commonname']['$t'],
-            family: item['gsx$family']['$t'],
+            speccode: item.SPECIES_CODE,
+            birdname: item.COMMON_NAME,
+            family: item.FAMILY,
           }))
           .reduce((result, item) => {
             result[item['speccode']] = {
@@ -57,7 +58,8 @@ export default {
       // 例行路線
       try {
         const ret = await this.$http.get(this.sheet_url(2))
-
+        const paths = this.sheet_format(ret.data.values)
+        /*
         const paths = ret.data.feed.entry.map(item => ({
           name: item['gsx$name']['$t'],
           location: item['gsx$location']['$t'],
@@ -67,6 +69,7 @@ export default {
           ebirdname: item['gsx$ebirdname']['$t'],
           locid: item['gsx$hotspot']['$t'],
         }))
+        */
         this.$offlineStorage.set('paths', paths)
       } catch (err) {
         console.log('例行路線', err)
@@ -74,11 +77,13 @@ export default {
       //相關網站
       try {
         const ret = await this.$http.get(this.sheet_url(4))
-
+        const sites = this.sheet_format(ret.data.values)
+        /*
         const sites = ret.data.feed.entry.map(item => ({
           name: item['gsx$name']['$t'],
           url: item['gsx$url']['$t'],
         }))
+        */
         this.$offlineStorage.set('sites', sites)
       } catch (err) {
         console.log('相關網站', err)
@@ -87,12 +92,14 @@ export default {
       //大型活動
       try {
         const ret = await this.$http.get(this.sheet_url(5))
-
+        const travels = this.sheet_format(ret.data.values)
+        /*
         const travels = ret.data.feed.entry.map(item => ({
           date: item['gsx$date']['$t'],
           name: item['gsx$name']['$t'],
           url: item['gsx$url']['$t'],
         }))
+        */
         this.$offlineStorage.set('travels', travels)
       } catch (err) {
         console.log('相關網站', err)

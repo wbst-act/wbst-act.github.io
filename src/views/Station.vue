@@ -71,7 +71,24 @@ export default {
     if (this.isOnline) {
       try {
         const ret = await this.$http.get(this.sheet_url(1))
-
+        const data = this.sheet_format(ret.data.values)
+        this.events = data
+          .filter(item => ['駐站', '賞鳥趣'].includes(item.type))
+          .map(item => ({
+            type: item.type,
+            name: item.name,
+            date: this.$moment(item.date, 'YYYY/MM/DD'),
+            starttime: item.starttime,
+            endtime: item.endtime,
+            leader: [item.p1, item.p2],
+            done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+              this.$moment(),
+              'day'
+            ),
+            cancel: item.cancel,
+            cancelhelp: item.cancel_help,
+          }))
+        /*
         this.events = ret.data.feed.entry
           .filter(item => ['駐站', '賞鳥趣'].includes(item['gsx$type']['$t']))
           .map(item => ({
@@ -88,6 +105,7 @@ export default {
             cancel: item['gsx$cancel']['$t'],
             cancelhelp: item['gsx$cancelhelp']['$t'],
           }))
+        */
 
         this.$offlineStorage.set('stations', this.events)
       } catch (err) {

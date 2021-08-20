@@ -60,7 +60,22 @@ export default {
     if (this.isOnline) {
       try {
         const ret = await this.$http.get(this.sheet_url(1))
-
+        const data = this.sheet_format(ret.data.values)
+        const records = data
+          .filter(
+            item =>
+              ['例行', '周末派', '白頭翁'].includes(item.type) &&
+              item.cancel != 'y'
+          )
+          .map(item => ({
+            name: item.name,
+            date: this.$moment(item.date, 'YYYY/MM/DD'),
+            people: item.people,
+            watchbirds: item.watchbirds,
+            ebird: item.ebird,
+            leader: [item.p1, item.p2, item.p3, item.p4],
+          }))
+        /*
         const data = ret.data.feed.entry
           .filter(
             item =>
@@ -80,7 +95,10 @@ export default {
               item['gsx$p4']['$t'],
             ],
           }))
-        this.history = data.filter(item => item.date < this.$moment()).reverse()
+          */
+        this.history = records
+          .filter(item => item.date < this.$moment())
+          .reverse()
         this.$offlineStorage.set('history', this.history)
       } catch (err) {
         console.log('歷史記錄', err)
