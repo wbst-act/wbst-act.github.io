@@ -10,7 +10,7 @@ v-main
             | {{ item.name }}            
           v-list-item-subtitle 
             | {{ item.location }} 
-            span.float-right {{ item.time}}
+            span.float-right {{ item.starttime}}
           v-list-item-subtitle {{ item.ebirdname }}             
         
       v-list-item(v-else :key="item.name")

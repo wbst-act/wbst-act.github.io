@@ -15,14 +15,14 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
               v-list-item-title 路線
               v-list-item-subtitle 
                 | {{ selectedEvent.name }}
-                span(v-if="selectedEvent.memberonly") (會員限定場，需事先報名)
+                span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
         template(v-else)
           v-list-item(link :href='ebird_hotspot' target="_blank")
             v-list-item-content
               v-list-item-title 路線
               v-list-item-subtitle
                 | {{ selectedEvent.name }}
-                span(v-if="selectedEvent.memberonly") (會員限定場，需事先報名)
+                span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
             v-list-item-action
               v-icon(color="green" icon ) {{icons.mdiBird }}
         template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
@@ -58,8 +58,8 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
             v-list-item-title 報名網址
             v-list-item-subtitle(v-if="selectedEvent.memberurl") {{ selectedEvent.memberurl }}
             v-list-item-subtitle(v-else) 尚未開始報名
-      //template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")
-      template(v-if="selectedEvent.done==false")
+      //template(v-if="selectedEvent.done==false")
+      template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")      
         v-divider
         v-card-actions
           template(v-if="users.length==0")
