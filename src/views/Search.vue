@@ -46,66 +46,7 @@ export default {
     paths: [],
   }),
   async mounted() {
-    if (this.isOnline) {
-      try {
-        const ret = await this.$http.get(this.sheet_url(1))
-        const data = this.sheet_format(ret.data.values)
-        this.allschedule = data.map(item => ({
-          type: item.type,
-          name: item.name,
-          date: this.$moment(item.date, 'YYYY/MM/DD'),
-          starttime: item.starttime,
-          endtime: item.endtime,
-          location: item.location,
-          p1: item.p1,
-          p2: item.p2,
-          p3: item.p3,
-          p4: item.p4,
-          start: item.date.replaceAll('/', '-') + 'T ' + item.starttime,
-          end: item.date.replaceAll('/', '-') + 'T ' + item.endtime,
-          done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
-            this.$moment(),
-            'day'
-          ),
-          cancel: item.cancel,
-          cancelhelp: item.cancel_help,
-        }))
-        /*
-        this.allschedule = ret.data.feed.entry.map(item => ({
-          type: item['gsx$type']['$t'],
-          name: item['gsx$name']['$t'],
-          date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-          starttime: item['gsx$starttime']['$t'],
-          endtime: item['gsx$endtime']['$t'],
-          location: item['gsx$location']['$t'],
-          p1: item['gsx$p1']['$t'],
-          p2: item['gsx$p2']['$t'],
-          p3: item['gsx$p3']['$t'],
-          p4: item['gsx$p4']['$t'],
-          start:
-            item['gsx$date']['$t'].replaceAll('/', '-') +
-            'T' +
-            item['gsx$starttime']['$t'],
-          end:
-            item['gsx$date']['$t'].replaceAll('/', '-') +
-            'T' +
-            item['gsx$endtime']['$t'],
-          done: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD').isBefore(
-            this.$moment(),
-            'day'
-          ),
-          cancel: item['gsx$cancel']['$t'],
-          cancelhelp: item['gsx$cancelhelp']['$t'],
-        }))
-        */
-        this.$offlineStorage.set('schedules', this.events)
-      } catch (err) {
-        console.log('search', err)
-        this.allschedule = this.$offlineStorage.get('schedules')
-      }
-    } else {
-      this.allschedule = this.$offlineStorage.get('schedules')
-    }
+    this.allschedule = this.$offlineStorage.get('schedules') ?? []
     this.paths = this.$offlineStorage.get('paths') ?? []
   },
   methods: {

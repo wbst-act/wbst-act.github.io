@@ -1,6 +1,10 @@
 <template lang="pug">
   wbst-header
-    router-view 
+    template(v-if='loading')
+      v-main
+        v-progress-linear(color='light-green darken-3' indeterminate rounded height="10")
+    template(v-else)
+      router-view 
     v-snackbar(:value="updateExists" :timeout="-1" color="light-green darken-3" centered)
       | 有新版本可以更新
       template(v-slot:action="{ attrs }")
@@ -13,6 +17,19 @@ import WbstHeader from '@/components/WbstHeader.vue'
 export default {
   name: 'App',
   mixins: [update, sheet],
+  data: () => ({
+    colors: [
+      'teal',
+      'red lighten-4',
+      'green',
+      'deep-purple',
+      'orange lighten-1',
+      'grey lighten-1',
+      'indigo',
+    ],
+    version: '',
+    loading: true,
+  }),
   components: { WbstHeader },
   async mounted() {
     this.$vuetify.theme.dark = this.$offlineStorage.get('darkmode')
@@ -21,15 +38,16 @@ export default {
       try {
         const ret = await this.$http.get(this.sheet_url(6))
         const data = this.sheet_format(ret.data.values)
-        const new_version = data[0].version
-        if (new_version != version) {
+        this.version = data[0].version
+        if (this.version != version) {
           await this.update()
-          this.$offlineStorage.set('version', new_version)
+          this.$offlineStorage.set('version', this.version)
         }
       } catch (err) {
         console.log('version', err)
       }
     }
+    this.loading = false
   },
   methods: {
     async update() {
@@ -103,6 +121,91 @@ export default {
         this.$offlineStorage.set('travels', travels)
       } catch (err) {
         console.log('相關網站', err)
+      }
+      //例行活動
+      try {
+        const ret = await this.$http.get(this.sheet_url(1))
+        const data = this.sheet_format(ret.data.values)
+        const activity = data
+          .filter(item => ['例行', '周末派', '白頭翁'].includes(item.type))
+          .map(item => ({
+            type: item.type,
+            name: item.name,
+            date: this.$moment(item.date, 'YYYY/MM/DD'),
+            starttime: item.starttime,
+            endtime: item.endtime,
+            location: item.location,
+            leader: [item.p1, item.p2, item.p3, item.p4],
+            start: item.date.replaceAll('/', '-') + 'T ' + item.starttime,
+            end: item.date.replaceAll('/', '-') + 'T ' + item.endtime,
+            done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+              this.$moment(),
+              'day'
+            ),
+            color: this.colors[
+              this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+                this.$moment(),
+                'day'
+              )
+                ? 5
+                : item.date == 'y'
+                ? 1
+                : this.$moment(item.date, 'YYYY/MM/DD').weekday()
+            ],
+            bus: item.bus,
+            ebird: item.ebird,
+            cancel: item.cancel,
+            cancelhelp: item.cancel_help,
+            memberonly: item.member_only,
+            memberurl: item.member_url,
+            today: this.$moment(item.date, 'YYYY/MM/DD').isSame(
+              this.$moment(),
+              'day'
+            ),
+            people: item.people,
+          }))
+        const stations = data
+          .filter(item => ['駐站', '賞鳥趣'].includes(item.type))
+          .map(item => ({
+            type: item.type,
+            name: item.name,
+            date: this.$moment(item.date, 'YYYY/MM/DD'),
+            starttime: item.starttime,
+            endtime: item.endtime,
+            leader: [item.p1, item.p2],
+            done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+              this.$moment(),
+              'day'
+            ),
+            cancel: item.cancel,
+            cancelhelp: item.cancel_help,
+          }))
+        const allschedule = data.map(item => ({
+          type: item.type,
+          name: item.name,
+          date: this.$moment(item.date, 'YYYY/MM/DD'),
+          starttime: item.starttime,
+          endtime: item.endtime,
+          location: item.location,
+          p1: item.p1,
+          p2: item.p2,
+          p3: item.p3,
+          p4: item.p4,
+          start: item.date.replaceAll('/', '-') + 'T ' + item.starttime,
+          end: item.date.replaceAll('/', '-') + 'T ' + item.endtime,
+          done: this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+            this.$moment(),
+            'day'
+          ),
+          cancel: item.cancel,
+          cancelhelp: item.cancel_help,
+        }))
+
+        this.$offlineStorage.set('activity', activity)
+        this.$offlineStorage.set('stations', stations)
+        this.$offlineStorage.set('schedules', allschedule)
+      } catch (err) {
+        console.log('例行活動', err)
       }
     },
   },

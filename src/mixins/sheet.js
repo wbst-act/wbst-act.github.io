@@ -19,7 +19,7 @@ export default {
       return values.map(item => {
         let data = {}
         for (let i = 0; i < names.length; i++) {
-          data[names[i]] = item[i]
+          data[names[i]] = item[i] || ''
         }
         return data
       })

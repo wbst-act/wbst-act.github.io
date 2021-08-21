@@ -76,6 +76,13 @@ v-app
           v-list-item-subtitle
             | 編譯時間 
           v-list-item-subtitle.text-caption {{ builddate }}
+      v-list-item(@click="refresh")
+        v-list-item-avatar(size="24")
+          v-icon {{ icons.mdiDatabase  }}     
+        v-list-item-content
+          v-list-item-subtitle
+            | 資料版本
+          v-list-item-subtitle.text-caption {{ version }}
 
   v-app-bar(app, 
     color="light-green darken-3", 
@@ -121,6 +128,7 @@ import {
   mdiExportVariant,
   mdiPlusBoxOutline,
   mdiBrightness4,
+  mdiDatabase,
 } from '@mdi/js'
 
 export default {
@@ -143,6 +151,7 @@ export default {
       mdiExportVariant,
       mdiPlusBoxOutline,
       mdiBrightness4,
+      mdiDatabase,
     },
     drawer: false,
     builddate: '',
@@ -150,6 +159,7 @@ export default {
     installed: false,
     iosinstall: false,
     darkmode: false,
+    version: '',
   }),
   computed: {
     title() {
@@ -188,6 +198,7 @@ export default {
     this.builddate = this.$moment(
       new Date(parseInt(document.documentElement.dataset.buildTimestamp))
     ).format('YYYY-MM-DD HH:mm')
+    this.version = this.$offlineStorage.get('version')
     this.iosinstall = this.isIos && this.isInStandaloneMode
   },
   methods: {

@@ -57,56 +57,14 @@ export default {
   }),
   async mounted() {
     this.loading = true
-    if (this.isOnline) {
-      try {
-        const ret = await this.$http.get(this.sheet_url(1))
-        const data = this.sheet_format(ret.data.values)
-        const records = data
-          .filter(
-            item =>
-              ['例行', '周末派', '白頭翁'].includes(item.type) &&
-              item.cancel != 'y'
-          )
-          .map(item => ({
-            name: item.name,
-            date: this.$moment(item.date, 'YYYY/MM/DD'),
-            people: item.people,
-            watchbirds: item.watchbirds,
-            ebird: item.ebird,
-            leader: [item.p1, item.p2, item.p3, item.p4],
-          }))
-        /*
-        const data = ret.data.feed.entry
-          .filter(
-            item =>
-              ['例行', '周末派', '白頭翁'].includes(item['gsx$type']['$t']) &&
-              item['gsx$cancel']['$t'] == ''
-          )
-          .map(item => ({
-            name: item['gsx$name']['$t'],
-            date: this.$moment(item['gsx$date']['$t'], 'YYYY/MM/DD'),
-            people: item['gsx$people']['$t'],
-            watchbirds: item['gsx$watchbirds']['$t'],
-            ebird: item['gsx$ebird']['$t'],
-            leader: [
-              item['gsx$p1']['$t'],
-              item['gsx$p2']['$t'],
-              item['gsx$p3']['$t'],
-              item['gsx$p4']['$t'],
-            ],
-          }))
-          */
-        this.history = records
-          .filter(item => item.date < this.$moment())
-          .reverse()
-        this.$offlineStorage.set('history', this.history)
-      } catch (err) {
-        console.log('歷史記錄', err)
-        this.history = this.$offlineStorage.get('history')
-      }
-    } else {
-      this.history = this.$offlineStorage.get('history')
-    }
+    const data = this.$offlineStorage.get('activity')
+    this.history = data
+      .filter(
+        item =>
+          this.$moment(item.date, 'YYYY/MM/DD') < this.$moment() &&
+          item.cancel != 'y'
+      )
+      .reverse()
     this.loading = false
   },
   methods: {
