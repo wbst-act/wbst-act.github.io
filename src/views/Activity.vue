@@ -16,6 +16,16 @@ v-main
       v-sheet
         v-skeleton-loader(type="list-item-two-line, list-item-two-line, list-item-two-line")
     template(v-else)
+      template(v-if="filterevent.length==0")
+        v-alert.pa-0(border="left" color="red lighten-4" colored-border elevation="2" dense)
+          v-container.px-3.py-0
+            v-row(no-gutters)  
+              v-col(cols="12")
+                v-list
+                  v-list-item
+                    v-list-item-content
+                      v-list-item-title 
+                        | 本週無例行活動
       template(v-for="item , index in filterevent")
         template(v-if="item.done")
           a(@click="ebirdOpen(item)" dense :key="index" :link="item.ebird!=''")
@@ -90,7 +100,12 @@ export default {
     ebirdDialog: false,
   }),
   created() {
-    this.focus = this.$moment(new Date()).day(0)
+    this.focus = this.$moment(new Date())
+    if (this.focus.day() == 0) {
+      this.focus = this.focus.day(-7)
+    } else {
+      this.focus = this.focus.day(0)
+    }
   },
   async mounted() {
     this.loading = true
