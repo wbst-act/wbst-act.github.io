@@ -198,7 +198,7 @@ export default {
     this.builddate = this.$moment(
       new Date(parseInt(document.documentElement.dataset.buildTimestamp))
     ).format('YYYY-MM-DD HH:mm')
-    this.version = this.$offlineStorage.get('version')
+    this.version = this.$offlineStorage.get('version') || []
     this.iosinstall = this.isIos && this.isInStandaloneMode
   },
   methods: {

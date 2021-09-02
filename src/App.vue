@@ -52,6 +52,8 @@ export default {
         if (JSON.stringify(this.version) != JSON.stringify(this.old_version)) {
           await this.update()
           this.$offlineStorage.set('version', this.version)
+          window.location.reload()
+          window.location.href = '/'
         }
       } catch (err) {
         console.log('version', err)
