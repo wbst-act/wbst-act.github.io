@@ -23,16 +23,17 @@ v-main
             span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
         v-list-item-action      
           v-icon(color='green' dark) {{ icons.mdiFormatListBulleted }}
-      v-list-item(v-else)
-        template(v-if='item.watchbirds > 0')
-          v-list-item-avatar.white--text(color='green' size='36') {{ item.watchbirds}}
-        template(v-else)
-          v-list-item-avatar(size='28')
-        v-list-item-content
-          v-list-item-title
-            | {{ item.location }}
-            span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
-        v-list-item-action
+      //
+        v-list-item(v-else)
+          template(v-if='item.watchbirds > 0')
+            v-list-item-avatar.white--text(color='green' size='36') {{ item.watchbirds}}
+          template(v-else)
+            v-list-item-avatar(size='28')
+          v-list-item-content
+            v-list-item-title
+              | {{ item.name }}
+              span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
+          v-list-item-action
       v-divider
   ebird-dialog(:dialog='dialog' :event='selectedEvent' @ebird-close="dialog=false")
 </template>
