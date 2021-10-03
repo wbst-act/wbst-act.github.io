@@ -54,7 +54,7 @@ v-main
                         v-list-item-content
                           v-list-item-title
                             | {{ item.name }}
-                            span(v-if="item.memberonly=='y'") (會員限定場，需事先報名)
+                            span(v-if="item.memberonly=='y'") (人數限制,需事先報名)
                             span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]                            
                           v-list-item-subtitle
                             | {{ item.location }}
