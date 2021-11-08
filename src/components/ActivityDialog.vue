@@ -59,7 +59,7 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
             v-list-item-subtitle(v-if="selectedEvent.memberurl") {{ selectedEvent.memberurl }}
             v-list-item-subtitle(v-else) 尚未開始報名
       //template(v-if="selectedEvent.done==false")
-      template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && selectedEvent.today")      
+      template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false && today")      
         v-divider
         v-card-actions
           template(v-if="users.length==0")
@@ -107,7 +107,10 @@ export default {
 
   computed: {
     date() {
-      return this.$moment(this.selectedEvent.date, 'YYYY/MM/DD')
+      return this.$moment(this.selectedEvent.date)
+    },
+    today() {
+      return this.date.isSame(this.$moment(), 'day')
     },
     newlocation() {
       return this.date.isBefore(this.$moment('2021/07/01', 'YYYY/MM/DD'), 'day')

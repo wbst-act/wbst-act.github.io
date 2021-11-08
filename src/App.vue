@@ -179,10 +179,6 @@ export default {
               cancelhelp: item.cancel_help,
               memberonly: item.member_only,
               memberurl: item.member_url,
-              today: this.$moment(item.date, 'YYYY/MM/DD').isSame(
-                this.$moment(),
-                'day'
-              ),
               people: item.people,
             }))
           const stations = data
