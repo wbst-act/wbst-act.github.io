@@ -30,6 +30,11 @@ const routes = [
     component: () => import('../views/RealName.vue'),
   },
   {
+    path: encodeURI('/實聯制簽到表單'),
+    name: '實聯制簽到表單',
+    component: () => import('../views/GoogleForm.vue'),
+  },
+  {
     path: encodeURI('/志工排班查詢'),
     name: '志工排班查詢',
     component: () => import('@/views/Search.vue'),
