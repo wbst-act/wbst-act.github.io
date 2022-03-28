@@ -17,14 +17,32 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
                 | {{ selectedEvent.name }}
                 span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
         template(v-else)
-          v-list-item(link :href='ebird_hotspot' target="_blank")
-            v-list-item-content
-              v-list-item-title 路線
-              v-list-item-subtitle
-                | {{ selectedEvent.name }}
-                span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
-            v-list-item-action
-              v-icon(color="green" icon ) {{icons.mdiBird }}
+          template(v-if='greenmap==""')
+            v-list-item(link :href='ebird_hotspot' target="_blank")
+              v-list-item-content
+                v-list-item-title 路線
+                v-list-item-subtitle
+                  | {{ selectedEvent.name }}
+                  span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
+              v-list-item-action
+                v-icon(color="green" icon ) {{icons.mdiBird }}
+          template(v-else)
+            v-menu(offset-y)
+              template(v-slot:activator="{ on, attrs }")                
+                v-list-item(link v-bind="attrs" v-on="on")                  
+                  v-list-item-content
+                    v-list-item-title 路線
+                    v-list-item-subtitle
+                      | {{ selectedEvent.name }}
+                      span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
+                  v-list-item-action
+                    v-icon(color="green" icon ) {{icons.mdiBird }}
+              v-list
+                v-list-item(:href="ebird_hotspot" target="_blank")
+                  v-list-item-title eBird熱點資訊
+                v-list-item(:href="greenmap" target="_blank")
+                  v-list-item-title 賞鳥綠地圖
+            
         template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
           v-list-item(link :href='google_calendar' target="_blank")
             v-list-item-content
@@ -173,6 +191,16 @@ export default {
       return this.isOnline && locid
         ? `https://ebird.org/hotspot/${locid}?m=${month}&yr=all&changeDate=`
         : ''
+    },
+    greenmap() {
+      const greenmap = this.paths.find(
+        item => item.name == this.selectedEvent.name
+      )
+        ? this.paths.find(item => item.name == this.selectedEvent.name)[
+            'greenmap'
+          ]
+        : ''
+      return this.isOnline && greenmap ? greenmap : ''
     },
   },
   methods: {

@@ -57,11 +57,11 @@ v-app
           v-icon {{icons.mdiShareVariant}}
         v-list-item-content
           v-list-item-title 分享APP
-      v-list-item(:to="{name: '電子發票捐贈碼'}")
+      v-list-item(:to="{name: '小額捐款'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiHeart}}
         v-list-item-content
-          v-list-item-title 電子發票捐贈碼
+          v-list-item-title 小額捐款
       v-list-item(:to="{name: '相關網站'}")
         v-list-item-avatar(size="24")            
           v-icon {{icons.mdiSitemap}}

@@ -60,8 +60,8 @@ const routes = [
     component: () => import('@/views/Share.vue'),
   },
   {
-    path: encodeURI('/電子發票捐贈碼'),
-    name: '電子發票捐贈碼',
+    path: encodeURI('/小額捐款'),
+    name: '小額捐款',
     component: () => import('@/views/Einvoice.vue'),
   },
   {
