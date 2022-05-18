@@ -34,14 +34,22 @@ def excel2csv(excelfile, csvfile):
   print(excelfile, csvfile)
   df=pd.read_excel(excelfile, index_col=0)
   data=[]
-  fieldname =['date','type','name','starttime','endtime','location','distance','birds','p1','p2','p3','p4',  'people', 'watchbirds', 'ebird','cancel','cancel_help']
+#   fieldname =['date','type','name','starttime','endtime','location','distance','birds','p1','p2','p3','p4',  'people', 'watchbirds', 'ebird','cancel','cancel_help']
+  fieldname =['date','type','name','ebird','people','watchbirds','p1','p2','p3','p4','starttime','endtime','location','bus', 'distance','birds',]
 
   for i in range (3, df.shape[0]):
     
     # 例行    
     if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['name']]) and not pd.isnull(df.iat[i, idx['p1']]) and  df.iat[i, idx['p1']].strip() !='會員大會(不排)':
         tmpdate = (df.iat[i, idx['date']]+pd.DateOffset(years=years))
-        #print(tmpdate,  df.iat[i, idx['name']],  df.iat[i, idx['start']],  df.iat[i, idx['location']],df.iat[i, idx['distance']], df.iat[i, idx['p1']], df.iat[i, idx['p2']], df.iat[i, idx['p3']], df.iat[i, idx['p4']])
+        print(tmpdate,  df.iat[i, idx['name']],  df.iat[i, idx['start']],  df.iat[i, idx['location']],df.iat[i, idx['distance']], df.iat[i, idx['p1']], df.iat[i, idx['p2']], df.iat[i, idx['p3']], df.iat[i, idx['p4']])
+        
+        if df.iat[i, idx['location']].find('(公車')>0:
+            location = df.iat[i, idx['location']][:df.iat[i, idx['location']].find('(公車')]
+            bus = df.iat[i, idx['location']][df.iat[i, idx['location']].find('(公車')+1:-1]
+        else:
+            location = df.iat[i, idx['location']]
+            bus = ''
 
         data.append({
             'date': tmpdate.strftime('%Y/%m/%d'),
@@ -49,22 +57,22 @@ def excel2csv(excelfile, csvfile):
             'name': df.iat[i, idx['name']].strip(),
             'starttime': df.iat[i, idx['start']].strftime('%H:%M'),
             'endtime': '12:00',
-            'location': df.iat[i, idx['location']],
+            'location': location,
             'distance': df.iat[i, idx['distance']],
+            'bus': bus,
             'birds': df.iat[i, idx['birds']],
             'p1': df.iat[i, idx['p1']].strip(),
             'p2': df.iat[i, idx['p2']].strip(),
             'p3': df.iat[i, idx['p3']].strip(),
             'p4': df.iat[i, idx['p4']].strip(),
-            'watchbirds': 0,
-            'people': 0
+            
         })
     
     # 關渡二樓
     
     if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['k1']]):
         tmpdate = (df.iat[i, idx['date']]+pd.DateOffset(years=years))
-        #print(i, tmpdate,  df.iat[i, idx['k1']],  df.iat[i, idx['k2']],  df.iat[i, idx['k3']],  df.iat[i, idx['k4']])
+        print(i, tmpdate,  df.iat[i, idx['k1']],  df.iat[i, idx['k2']],  df.iat[i, idx['k3']],  df.iat[i, idx['k4']])
         data.append({
             'date': tmpdate.strftime('%Y/%m/%d'),
             'type': '駐站',
