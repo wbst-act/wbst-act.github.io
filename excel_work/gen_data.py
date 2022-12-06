@@ -4,13 +4,13 @@ import sys
 import pandas as pd
 import csv
 
-offset = 0
+offset = 2
 idx={
-  'date': 0,
+  'date': 1,
   'name': 2,
   'start': 3,
-  'watchbirds': 4,
-  'people': 5,
+  'watchbirds': 5,
+  'people': 6,
   'location': 4+offset,
   'distance': 5+offset,
   'birds': 6+offset,
@@ -45,11 +45,25 @@ def excel2csv(excelfile, csvfile):
 
   for i in range (4, df.shape[0]):
     # 例行
-    if df.iat[i, 1]=='星期':
+    if df.iat[i, 2]=='星期':
         continue
-    tmpdate = (df.iat[i, idx['date']]+pd.DateOffset(years=0))
-    if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['name']]) and not pd.isnull(df.iat[i, idx['p1']]) and  df.iat[i, idx['p1']].strip() !='會員大會(不排)':
-        print( tmpdate.weekday(), tmpdate,  df.iat[i, idx['name']],  df.iat[i, idx['start']],  df.iat[i, idx['location']],df.iat[i, idx['distance']], df.iat[i, idx['p1']], df.iat[i, idx['p2']], df.iat[i, idx['p3']], df.iat[i, idx['p4']])
+    tmpdate = (df.iat[i, idx['date']])
+    print(tmpdate)
+    print(df.iat[i,idx['name']])
+    if type(df.iat[i, idx['date']]) != str and \
+        not pd.isnull(df.iat[i, idx['name']]) and \
+        not pd.isnull(df.iat[i, idx['p1']]) and  \
+            df.iat[i, idx['p1']].strip() !='會員大會(不排)':
+        print( tmpdate.weekday(),
+              tmpdate,  
+              df.iat[i, idx['name']],  
+              df.iat[i, idx['start']],  
+              df.iat[i, idx['location']],
+              df.iat[i, idx['distance']], 
+              df.iat[i, idx['p1']], 
+              df.iat[i, idx['p2']], 
+              df.iat[i, idx['p3']], 
+              df.iat[i, idx['p4']])
         
 
         data.append({
@@ -61,10 +75,10 @@ def excel2csv(excelfile, csvfile):
             'location': df.iat[i, idx['location']],
             'distance': df.iat[i, idx['distance']],           
             'birds': df.iat[i, idx['birds']],
-            'p1': df.iat[i, idx['p1']].strip(),
-            'p2': df.iat[i, idx['p2']].strip(),
-            'p3': df.iat[i, idx['p3']].strip(),
-            'p4': df.iat[i, idx['p4']].strip()            
+            'p1': '' if type(df.iat[i, idx['p1']])==float else df.iat[i, idx['p1']].strip(),
+            'p2': '' if type(df.iat[i, idx['p2']])==float else df.iat[i, idx['p2']].strip(),
+            'p3': '' if type(df.iat[i, idx['p3']])==float else df.iat[i, idx['p3']].strip(),
+            'p4': '' if type(df.iat[i, idx['p4']])==float else df.iat[i, idx['p4']].strip()            
         })
 
     # 關渡二樓
@@ -76,19 +90,19 @@ def excel2csv(excelfile, csvfile):
             'name': '關渡自然公園中心二樓',
             'starttime': '09:00',
             'endtime': '12:00',
-            'p1': df.iat[i, idx['k1']].strip(),
-            'p2': df.iat[i, idx['k2']].strip(),
+            'p1':'' if type(df.iat[i, idx['k1']])==float else  df.iat[i, idx['k1']].strip(),
+            'p2':'' if type(df.iat[i, idx['k2']])==float else  df.iat[i, idx['k2']].strip(),
         })
-        if df.iat[i, idx['k3']].strip() != '*會員大會例行暫停1次':
-            data.append({
-                'date': tmpdate.strftime('%Y/%m/%d'),
-                'type': '駐站',
-                'name': '關渡自然公園中心二樓',
-                'starttime': '14:00',
-                'endtime': '17:00',
-                'p1': df.iat[i, idx['k3']].strip(),
-                'p2': df.iat[i, idx['k4']].strip(),
-            })
+        # if df.iat[i, idx['k3']].strip() != '*會員大會例行暫停1次':
+        data.append({
+            'date': tmpdate.strftime('%Y/%m/%d'),
+            'type': '駐站',
+            'name': '關渡自然公園中心二樓',
+            'starttime': '14:00',
+            'endtime': '17:00',
+            'p1': '' if type(df.iat[i, idx['k3']])==float else df.iat[i, idx['k3']].strip(),
+            'p2': '' if type(df.iat[i, idx['k4']])==float else df.iat[i, idx['k4']].strip(),
+        })
 
 
     # 賞鳥趣
@@ -101,8 +115,8 @@ def excel2csv(excelfile, csvfile):
             'name': '關渡自然公園中心',
             'starttime': '14:00',
             'endtime': '17:00',
-            'p1': df.iat[i, idx['s1']].strip(),
-            'p2': df.iat[i, idx['s2']].strip(),
+            'p1': '' if type(df.iat[i, idx['s1']])==float else df.iat[i, idx['s1']].strip(),
+            'p2': '' if type(df.iat[i, idx['s2']])==float else df.iat[i, idx['s2']].strip(),
         })
     
     # 芝山
@@ -114,12 +128,13 @@ def excel2csv(excelfile, csvfile):
             'name': '芝山綠園',
             'starttime': '14:00',
             'endtime': '17:00',
-            'p1': df.iat[i, idx['c1']].strip(),
+            'p1': '' if type(df.iat[i, idx['c1']])==float else df.iat[i, idx['c1']].strip(),
         })
 
 
     # 大安森林公園
-    if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['d1']]) and not pd.isnull(df.iat[i, idx['d2']]):
+    #if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['d1']]) and not pd.isnull(df.iat[i, idx['d2']]):
+    if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['d1']]) and not pd.isnull(df.iat[i, idx['d2']])and not pd.isnull(df.iat[i, idx['d3']]) and not pd.isnull(df.iat[i, idx['d4']]):
         print('大安',i, df.iat[i, idx['date']],  df.iat[i, idx['d1']],  df.iat[i, idx['d2']],  df.iat[i, idx['d3']],  df.iat[i, idx['d4']])
         data.append({
             'date': tmpdate.strftime('%Y/%m/%d'),
@@ -127,8 +142,8 @@ def excel2csv(excelfile, csvfile):
             'name': '大安森林公園',
             'starttime': '08:30',
             'endtime': '11:30',
-            'p1': df.iat[i, idx['d1']].strip(),
-            'p2': df.iat[i, idx['d2']].strip(),
+            'p1': '' if type(df.iat[i, idx['d1']])==float else df.iat[i, idx['d1']].strip(),
+            'p2': '' if type(df.iat[i, idx['d2']])==float else df.iat[i, idx['d2']].strip(),
         })
 
         data.append({
@@ -137,12 +152,13 @@ def excel2csv(excelfile, csvfile):
             'name': '大安森林公園',
             'starttime': '13:30',
             'endtime': '16:30',
-            'p1': df.iat[i, idx['d3']].strip(),
-            'p2': df.iat[i, idx['d4']].strip(),
+            'p1': '' if type(df.iat[i, idx['d3']])==float else df.iat[i, idx['d3']].strip(),
+            'p2': '' if type(df.iat[i, idx['d4']])==float else df.iat[i, idx['d4']].strip(),
         })
 
     # 華江雁鴨公園
-    if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['h1']]):
+    # if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['h1']]):
+    if type(df.iat[i, idx['date']]) != str and not pd.isnull(df.iat[i, idx['d1']]) and not pd.isnull(df.iat[i, idx['d2']])and not pd.isnull(df.iat[i, idx['d3']]) and not pd.isnull(df.iat[i, idx['d4']]):
         print('華江',i, df.iat[i, idx['date']],  df.iat[i, idx['h1']],  df.iat[i, idx['h2']],  df.iat[i, idx['h3']],  df.iat[i, idx['h4']])
         data.append({
             'date': tmpdate.strftime('%Y/%m/%d'),
@@ -150,8 +166,8 @@ def excel2csv(excelfile, csvfile):
             'name': '華江雁鴨公園',
             'starttime': '08:30',
             'endtime': '11:30',
-            'p1': df.iat[i, idx['h1']].strip(),
-            'p2': df.iat[i, idx['h2']].strip(),
+            'p1': '' if type(df.iat[i, idx['h1']])==float else df.iat[i, idx['h1']].strip(),
+            'p2': '' if type(df.iat[i, idx['h2']])==float else  df.iat[i, idx['h2']].strip(),
         })
 
         '''暫停
