@@ -55,13 +55,17 @@ v-main
                           v-list-item-title
                             | {{ item.name }}
                             span(v-if="item.memberonly=='y'") (人數限制,需事先報名)
-                            span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]                            
+                            span.caption.red--text(v-if="item.cancel=='y' || item.cancel=='c'") [{{item.cancelhelp}}]                            
                           v-list-item-subtitle
                             | {{ item.location }}
                             span.float-right {{ item.starttime}}
                           v-list-item-subtitle
                             | {{ item.leader.join(' ') }}
-
+      template(v-if="filterevent.length>0")           
+        v-alert.pa-0(border="left" color="red" colored-border elevation="2" dense)
+          v-container.px-3.py-0
+            v-row(no-gutters)
+              | 如遇颱風豪雨或不可抗拒因素取消活動或變更路線，將於前一工作日公告同步公告於台北鳥會官網與FB粉專及北鳥例行APP，出門前請確認活動是否異動。
 
 </template>
 
