@@ -138,6 +138,7 @@ export default {
           }))
           */
           this.$offlineStorage.set('travels', travels)
+          this.$offlineStorage.set('travel_new', true)
         } catch (err) {
           console.log('相關網站', err)
         }
@@ -163,16 +164,17 @@ export default {
                 this.$moment(),
                 'day'
               ),
-              color: this.colors[
-                this.$moment(item.date, 'YYYY/MM/DD').isBefore(
-                  this.$moment(),
-                  'day'
-                )
-                  ? 5
-                  : item.date == 'y'
-                  ? 1
-                  : this.$moment(item.date, 'YYYY/MM/DD').weekday()
-              ],
+              color:
+                this.colors[
+                  this.$moment(item.date, 'YYYY/MM/DD').isBefore(
+                    this.$moment(),
+                    'day'
+                  )
+                    ? 5
+                    : item.date == 'y'
+                    ? 1
+                    : this.$moment(item.date, 'YYYY/MM/DD').weekday()
+                ],
               bus: item.bus,
               ebird: item.ebird,
               cancel: item.cancel,

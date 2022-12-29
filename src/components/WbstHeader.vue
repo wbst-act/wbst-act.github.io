@@ -29,6 +29,8 @@ v-app
           v-icon {{icons.mdiTrainCarPassenger}}
         v-list-item-content
           v-list-item-title 大型活動資訊
+        v-list-item-icon(v-if="new_data")
+          v-icon(color="orange") {{icons.mdiNewBox}}
       v-list-item(:to="{name: '關渡自然公園即時鳥況'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiPineTree}}
@@ -135,6 +137,7 @@ import {
   mdiBrightness4,
   mdiDatabase,
   mdiPencil,
+  mdiNewBox,
 } from '@mdi/js'
 
 export default {
@@ -159,6 +162,7 @@ export default {
       mdiBrightness4,
       mdiDatabase,
       mdiPencil,
+      mdiNewBox,
     },
     drawer: false,
     builddate: '',
@@ -167,6 +171,7 @@ export default {
     iosinstall: false,
     darkmode: false,
     version: '',
+    new_data: false,
   }),
   computed: {
     title() {
@@ -206,6 +211,7 @@ export default {
       new Date(parseInt(document.documentElement.dataset.buildTimestamp))
     ).format('YYYY-MM-DD HH:mm')
     this.version = this.$offlineStorage.get('version') || []
+    this.new_data = this.$offlineStorage.get('travel_new') || false
     this.iosinstall = this.isIos && this.isInStandaloneMode
   },
   methods: {

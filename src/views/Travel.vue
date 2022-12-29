@@ -23,6 +23,7 @@ export default {
   }),
   mounted() {
     this.travels = this.$offlineStorage.get('travels')
+    this.$offlineStorage.set('travel_new', false)
   },
 }
 </script>
