@@ -138,7 +138,8 @@ export default {
           }))
           */
           this.$offlineStorage.set('travels', travels)
-          this.$offlineStorage.set('travel_new', true)
+          if(travels.length > 0)
+            this.$offlineStorage.set('travel_new', true)
         } catch (err) {
           console.log('相關網站', err)
         }
