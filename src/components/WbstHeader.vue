@@ -99,6 +99,8 @@ v-app
     v-toolbar-title {{ title }}
     v-spacer
     v-icon(v-if='isOffline') {{ icons.mdiWifiStrengthOffOutline}}
+    v-btn(v-if='new_data' :to="{name: '大型活動資訊'}" icon)
+      v-icon {{icons.mdiEmailPlusOutline }}
     slot(name='toolbar')
   slot
   v-snackbar(v-model="installed" color="light-green darken-3" top timeout='15000')
@@ -138,6 +140,7 @@ import {
   mdiDatabase,
   mdiPencil,
   mdiNewBox,
+  mdiEmailPlusOutline,
 } from '@mdi/js'
 
 export default {
@@ -163,6 +166,7 @@ export default {
       mdiDatabase,
       mdiPencil,
       mdiNewBox,
+      mdiEmailPlusOutline,
     },
     drawer: false,
     builddate: '',
