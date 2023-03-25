@@ -43,16 +43,16 @@ v-app
         v-list-item-content
           v-list-item-title 志工排班查詢
       v-divider      
-      v-list-item(:to="{name: '實聯制個資設定'}")
+      v-list-item(:to="{name: '活動報到個資設定'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiAccountCircle}}
         v-list-item-content
-          v-list-item-title 實聯制個資設定
-      v-list-item(:to="{name: '實聯制簽到表單'}")
+          v-list-item-title 活動報到個資設定
+      v-list-item(:to="{name: '活動簽到表單'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiPencil}}
         v-list-item-content
-          v-list-item-title 實聯制簽到表單
+          v-list-item-title 活動簽到表單
       v-divider
       v-list-item(:to="{name: '分享APP'}")
         v-list-item-avatar(size="24")

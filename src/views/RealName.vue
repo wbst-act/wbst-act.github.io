@@ -17,7 +17,7 @@ v-main
     v-card(dense)
       v-card
         v-toolbar.white--text(class="light-green darken-3"  dense)
-          v-toolbar-title 實聯制個資設定
+          v-toolbar-title 活動報到個資設定
           v-spacer
           v-btn(v-if="userid!=-1" @click="del()" icon dark)
             v-icon {{ icons.mdiDelete }}

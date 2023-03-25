@@ -25,13 +25,13 @@ const routes = [
     component: () => import('../views/Paths.vue'),
   },
   {
-    path: encodeURI('/實聯制個資設定'),
-    name: '實聯制個資設定',
+    path: encodeURI('/活動報到個資設定'),
+    name: '活動報到個資設定',
     component: () => import('../views/RealName.vue'),
   },
   {
-    path: encodeURI('/實聯制簽到表單'),
-    name: '實聯制簽到表單',
+    path: encodeURI('/活動簽到表單'),
+    name: '活動簽到表單',
     component: () => import('../views/GoogleForm.vue'),
   },
   {

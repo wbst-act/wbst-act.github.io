@@ -81,13 +81,13 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
         v-divider
         v-card-actions
           template(v-if="users.length==0")
-            v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) 實聯制簽到
+            v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) 活動簽到
           template(v-else-if="users.length==1")
-            v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) 實聯制簽到
+            v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) 活動簽到
           template(v-else)
             v-menu(offset-y)
               template(v-slot:activator="{ on, attrs }")
-                v-btn(link  block color="green" dark v-bind="attrs" v-on="on") 實聯制簽到
+                v-btn(link  block color="green" dark v-bind="attrs" v-on="on") 活動簽到
               v-list
                 v-list-item(v-for="user in users" :key="user.name" link :href="google_form(user.name, user.tel, user.member)" target="_blank")
                   v-list-item-title {{ user.name }}
