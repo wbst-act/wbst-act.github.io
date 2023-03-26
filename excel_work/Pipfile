@@ -15,3 +15,6 @@ requests = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+install_search_all_sources = true

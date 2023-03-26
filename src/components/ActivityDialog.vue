@@ -205,13 +205,16 @@ export default {
   },
   methods: {
     google_form(name, tel, member) {
-      const event =
-        this.$moment(this.selectedEvent.date, 'YYYY/M/D').format('MMDD') +
-        '@' +
-        this.selectedEvent.name
       return this.isOnline
-        ? 'https://docs.google.com/forms/d/e/1FAIpQLSflFovOlWATa2MhTy8LaVxaq8ROcsQB3dD98zL4AwkJYB85Qw/viewform?entry.1479042466=' +
-            event +
+        ? 'https://docs.google.com/forms/d/e/1FAIpQLSflFovOlWATa2MhTy8LaVxaq8ROcsQB3dD98zL4AwkJYB85Qw/viewform?' +
+            'entry.1479042466_year=' +
+            this.$moment().format('YYYY') +
+            '&entry.1479042466_month=' +
+            this.$moment().format('MM') +
+            '&entry.1479042466_day=' +
+            this.$moment().format('DD') +
+            '&entry.120979086=' +
+            this.selectedEvent.name +
             '&entry.1844593536=' +
             name +
             '&entry.411882768=' +

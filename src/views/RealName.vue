@@ -9,7 +9,7 @@ v-main
           v-list-item-title {{ item.name }}
       v-divider
     v-alert.ma-2(border="top" colored-border type="info" elevation="2") 
-      .caption  設定後,下次執行實聯制簽到會自動帶入個人資料。家庭成員也可以設定多組資料。
+      .caption  設定後,下次執行活動簽到會自動帶入個人資料。家庭成員也可以設定多組資料。
   v-dialog(v-model='dialog')
     template(v-slot:activator="{on, attrs}")
       v-btn(fixed, dark, fab, bottom, right, color="green" @click="adduser")
