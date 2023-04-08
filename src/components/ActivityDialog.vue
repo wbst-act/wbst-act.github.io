@@ -54,7 +54,7 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
             v-list-item-content
               v-list-item-title {{ $t('集合地點') }}
               v-list-item-subtitle {{ $i18n.locale=='en' ? selectedEvent.path.elocation : selectedEvent.location }}
-              v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ selectedEvent.path.bus }}
+              v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ $i18n.locale=='en' ? selectedEvent.path.ebus : selectedEvent.bus }}
             v-list-item-action
               v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
         template(v-else)
@@ -66,7 +66,7 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
             v-list-item-content
               v-list-item-title {{ $t('集合地點') }}
               v-list-item-subtitle {{ $i18n.locale=='en' ? selectedEvent.path.elocation : selectedEvent.location }}
-              v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ selectedEvent.path.bus }}
+              v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ $i18n.locale=='en' ? selectedEvent.path.ebus : selectedEvent.bus }}
         v-list-item
           v-list-item-content
             v-list-item-title {{ $t('解說員') }}
