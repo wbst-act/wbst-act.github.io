@@ -1,9 +1,7 @@
 <template lang="pug">
 v-app
   v-navigation-drawer(app, 
-      v-model="drawer",
-      absolute,
-      temporary,
+      v-model="drawer"
       :bottom="$i18n.locale=='en'",
       :clipped="$vuetify.breakpoint.lgAndUp")
     v-list( nav )

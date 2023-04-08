@@ -69,7 +69,7 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
               v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ selectedEvent.path.bus }}
         v-list-item
           v-list-item-content
-            v-list-item-title {{ $t('領隊') }}
+            v-list-item-title {{ $t('解說員') }}
             v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
         v-list-item(v-if="selectedEvent.memberonly=='y'" link :href="selectedEvent.memberurl")
           v-list-item-content
