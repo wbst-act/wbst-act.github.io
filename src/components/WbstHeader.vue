@@ -8,74 +8,84 @@ v-app
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiCalendar}}          
         v-list-item-content
-          v-list-item-title 例行活動
+          v-list-item-title {{ $t('例行活動') }}
       v-list-item(:to="{name: '駐站解說'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiTelescope}}          
         v-list-item-content
-          v-list-item-title 駐站解說
+          v-list-item-title {{ $t('駐站解說') }}
       v-list-item(:to="{name: '歷史記錄查詢'}")
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiFormatListBulleted }}          
         v-list-item-content
-          v-list-item-title 歷史記錄查詢
+          v-list-item-title {{ $t('歷史記錄查詢') }}
       v-list-item(:to="{name: '例行路線查詢'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiMapMarkerPath}}
         v-list-item-content
-          v-list-item-title 例行路線查詢
+          v-list-item-title {{ $t('例行路線查詢') }}
       v-list-item(:to="{name: '大型活動資訊'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiTrainCarPassenger}}
         v-list-item-content
-          v-list-item-title 大型活動資訊
+          v-list-item-title {{ $t('大型活動資訊') }}
         v-list-item-icon(v-if="new_data")
           v-icon(color="orange") {{icons.mdiNewBox}}
       v-list-item(:to="{name: '關渡自然公園即時鳥況'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiPineTree}}
         v-list-item-content
-          v-list-item-title 關渡自然公園即時鳥況
+          v-list-item-title {{ $t('關渡自然公園即時鳥況') }}
       v-divider
       v-list-item(:to="{name: '志工排班查詢'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiTableSearch}}
         v-list-item-content
-          v-list-item-title 志工排班查詢
+          v-list-item-title {{ $t('志工排班查詢') }}
       v-divider      
       v-list-item(:to="{name: '活動報到個資設定'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiAccountCircle}}
         v-list-item-content
-          v-list-item-title 活動報到個資設定
+          v-list-item-title {{ $t('活動報到個資設定') }}
       v-list-item(:to="{name: '活動簽到表單'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiPencil}}
         v-list-item-content
-          v-list-item-title 活動簽到表單
+          v-list-item-title {{ $t('活動簽到表單') }}
       v-divider
       v-list-item(:to="{name: '分享APP'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiShareVariant}}
         v-list-item-content
-          v-list-item-title 分享APP
+          v-list-item-title {{ $t('分享APP') }}
       v-list-item(:to="{name: '小額捐款'}")
         v-list-item-avatar(size="24")
           v-icon {{icons.mdiHeart}}
         v-list-item-content
-          v-list-item-title 小額捐款
+          v-list-item-title {{ $t('小額捐款') }}
       v-list-item(:to="{name: '相關網站'}")
         v-list-item-avatar(size="24")            
           v-icon {{icons.mdiSitemap}}
         v-list-item-content
-          v-list-item-title 相關網站
+          v-list-item-title {{ $t('相關網站') }}
       v-divider
+      v-list-item(@click="setLang('en')" v-if="$i18n.locale!='en'")
+        v-list-item-avatar(size="24")
+          v-icon {{ icons.mdiTranslate }}     
+        v-list-item-content
+          v-list-item-title English Version
+      v-list-item(@click="setLang('tw')" v-if="$i18n.locale!='tw'")
+        v-list-item-avatar(size="24")
+          v-icon {{ icons.mdiTranslate }}     
+        v-list-item-content
+          v-list-item-title 中文版
       v-list-item
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiBrightness4 }}     
         v-list-item-content
           v-list-item-title
-            v-switch.ml-3(v-model="darkmode" @change="changemode" inset label="深色模式" dense)
+            v-switch.ml-3(v-model="darkmode" @change="changemode" inset :label="$t('深色模式')" dense)
       v-list-item(@click="refresh")
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiClockOutline }}     
@@ -104,17 +114,17 @@ v-app
     slot(name='toolbar')
   slot
   v-snackbar(v-model="installed" color="light-green darken-3" top timeout='15000')
-      | 安裝至桌面,隨時可以查詢
+      | {{ $t('__msg_install__')}}
       template(v-slot:action="{ attrs }")
-        v-btn( @click="dismiss" text) 取消
-        v-btn( @click="install" text) 安裝 
+        v-btn( @click="dismiss" text) {{ $t('取消') }}
+        v-btn( @click="install" text) {{ $t('安裝') }}
   v-snackbar(v-model="iosinstall" color="light-green darken-3" bottom timeout='30000' multiLine)
     div
-      | 安裝至桌面,隨時可以查詢
+      | {{ $t('__msg_install__')}}
     div 
-      | iOS使用者, 請使用Safari開啟, 選擇分享
+      | {{ $t('__msg_install_ios__')}}
       v-icon {{ icons.mdiExportVariant}}
-      | 後 加入主畫面
+      | {{ $t('加入主畫面')}}
       v-icon {{ icons.mdiPlusBoxOutline }}
     
 </template>
@@ -141,6 +151,7 @@ import {
   mdiPencil,
   mdiNewBox,
   mdiEmailPlusOutline,
+  mdiTranslate,
 } from '@mdi/js'
 
 export default {
@@ -167,6 +178,7 @@ export default {
       mdiPencil,
       mdiNewBox,
       mdiEmailPlusOutline,
+      mdiTranslate,
     },
     drawer: false,
     builddate: '',
@@ -179,7 +191,7 @@ export default {
   }),
   computed: {
     title() {
-      return this.$route.name
+      return this.$t(this.$route.name)
     },
     isShare() {
       return navigator.share
@@ -235,6 +247,10 @@ export default {
     changemode() {
       this.$offlineStorage.set('darkmode', this.darkmode)
       this.$vuetify.theme.dark = this.darkmode
+    },
+    setLang(lang) {
+      localStorage.setItem('language', lang)
+      return history.go(0)
     },
   },
 }

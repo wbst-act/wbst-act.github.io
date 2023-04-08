@@ -11,6 +11,7 @@ import moment from 'moment-timezone'
 import VueOffline from 'vue-offline'
 import VueCookies from 'vue-cookies'
 import VueGtag from 'vue-gtag'
+import i18n from './plugins/vue-i18n'
 
 require('moment/locale/zh-tw')
 
@@ -24,6 +25,7 @@ Vue.use(VueMoment, {
   moment,
 })
 new Vue({
+  i18n,
   router,
   store,
   vuetify,

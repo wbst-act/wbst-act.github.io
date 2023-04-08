@@ -19,7 +19,7 @@ v-main
           v-list-item-avatar(size='28')          
         v-list-item-content
           v-list-item-title
-            | {{ item.name }}
+            | {{ $i18n.locale=='en' ? item.path.ename : item.name }}
             span.caption.float-right {{ item.date | moment('YYYY-MM-DD')}} 
         v-list-item-action      
           v-icon(color='green' dark) {{ icons.mdiFormatListBulleted }}
@@ -51,6 +51,7 @@ export default {
       mdiFormatListBulleted,
     },
     history: [],
+    paths: [],
     selectedEvent: null,
     loading: true,
     dialog: false,
@@ -59,6 +60,7 @@ export default {
   async mounted() {
     this.loading = true
     const data = this.$offlineStorage.get('activity')
+    this.paths = this.$offlineStorage.get('paths') ?? []
     this.history = data
       .filter(
         item =>
@@ -66,6 +68,14 @@ export default {
           item.cancel != 'y'
       )
       .reverse()
+    this.history.forEach(event =>
+      this.$set(
+        event,
+        'path',
+        this.paths.find(item => item.name == event.name)
+      )
+    )
+
     this.loading = false
   },
   methods: {

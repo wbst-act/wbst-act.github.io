@@ -1,6 +1,6 @@
 <template lang="pug">
 v-main
-  activity-dialog(:selectedOpen="selectedOpen", :selectedEvent="selectedEvent" @close="selectedOpen=false")
+  activity-dialog(:selectedOpen="selectedOpen", :selectedEvent="selectedEvent" :path="selectedPath" @close="selectedOpen=false")
   ebird-dialog(:dialog='ebirdDialog' :event='selectedEvent' @ebird-close="ebirdDialog=false")
   v-container(fluid)
     v-card(flat dense)
@@ -38,7 +38,7 @@ v-main
                       v-list-item
                         v-list-item-content
                           v-list-item-title 
-                            | {{ item.name }}
+                            | {{ $i18n.locale=='en' ? item.path.ename: item.name }}
                             span.caption.red--text(v-if="item.cancel=='y'") [{{item.cancelhelp}}]
                         v-list-item-action(v-if="item.ebird")
                           v-icon(color="green") {{ icons.mdiBird }}
@@ -53,11 +53,11 @@ v-main
                       v-list-item
                         v-list-item-content
                           v-list-item-title
-                            | {{ item.name }}
-                            span(v-if="item.memberonly=='y'") (人數限制,需事先報名)
+                            | {{ $i18n.locale=='en' ? item.path.ename: item.name }}
+                            span(v-if="item.memberonly=='y'") ({{ $t('__msg_limit__') }})
                             span.caption.red--text(v-if="item.cancel=='y' || item.cancel=='c'") [{{item.cancelhelp}}]                            
                           v-list-item-subtitle
-                            | {{ item.location }}
+                            | {{  $i18n.locale=='en' ? item.path.elocation :  item.location }}
                             span.float-right {{ item.starttime}}
                           v-list-item-subtitle
                             | {{ item.leader.join(' ') }}
@@ -65,7 +65,7 @@ v-main
         v-alert.pa-0(border="left" color="red" colored-border elevation="2" dense)
           v-container.px-3.py-0
             v-row(no-gutters)
-              | 如遇颱風豪雨或不可抗拒因素取消活動或變更路線，將於前一工作日公告同步公告於台北鳥會官網與FB粉專及北鳥例行APP，出門前請確認活動是否異動。
+              | {{ $t('__msg_alert__') }}
 
 </template>
 
@@ -94,11 +94,13 @@ export default {
       'indigo',
     ],
     events: [],
+    paths: [],
     filterevent: [],
     loading: true,
     focus: null,
     users: [],
     selectedEvent: null,
+    selectedPath: null,
     selectedOpen: false,
     sid: '',
     ebirdDialog: false,
@@ -115,6 +117,7 @@ export default {
     this.loading = true
     this.users = this.$offlineStorage.get('users')
     this.events = this.$offlineStorage.get('activity') ?? []
+    this.paths = this.$offlineStorage.get('paths') ?? []
     this.getEvent()
 
     this.loading = false
@@ -146,6 +149,15 @@ export default {
           this.$moment(item.date).valueOf() >= this.focus.valueOf() &&
           this.$moment(item.date).valueOf() <= end.valueOf()
       )
+
+      this.filterevent.forEach(event =>
+        this.$set(
+          event,
+          'path',
+          this.paths.find(item => item.name == event.name)
+        )
+      )
+      // console.log(this.filterevent)
     },
     eventOpen(event) {
       this.selectedEvent = event

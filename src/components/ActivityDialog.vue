@@ -12,18 +12,18 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
         template(v-if='ebird_hotspot==""')
           v-list-item
             v-list-item-content
-              v-list-item-title 路線
+              v-list-item-title {{ $t('路線') }}
               v-list-item-subtitle 
-                | {{ selectedEvent.name }}
+                | {{ $i18n.locale=='en' ? selectedEvent.path.ename: selectedEvent.name }}
                 span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
         template(v-else)
           template(v-if='greenmap==""')
             v-list-item(link :href='ebird_hotspot' target="_blank")
               v-list-item-content
-                v-list-item-title 路線
+                v-list-item-title {{ $t('路線') }}
                 v-list-item-subtitle
-                  | {{ selectedEvent.name }}
-                  span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
+                  | {{ $i18n.locale=='en' ? selectedEvent.path.ename: selectedEvent.name }}
+                  span(v-if="selectedEvent.memberonly") ({{ $t('__msg_limit__') }})
               v-list-item-action
                 v-icon(color="green" icon ) {{icons.mdiBird }}
           template(v-else)
@@ -31,49 +31,49 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
               template(v-slot:activator="{ on, attrs }")                
                 v-list-item(link v-bind="attrs" v-on="on")                  
                   v-list-item-content
-                    v-list-item-title 路線
+                    v-list-item-title {{ $t('路線') }}
                     v-list-item-subtitle
-                      | {{ selectedEvent.name }}
-                      span(v-if="selectedEvent.memberonly") (人數限定場，需事先報名)
+                      | {{ $i18n.locale=='en' ? selectedEvent.path.ename: selectedEvent.name }}
+                      span(v-if="selectedEvent.memberonly") ({{ $t('__msg_limit__') }})
                   v-list-item-action
                     v-icon(color="green" icon ) {{icons.mdiBird }}
               v-list
                 v-list-item(:href="ebird_hotspot" target="_blank")
-                  v-list-item-title eBird熱點資訊
+                  v-list-item-title {{ $t('eBird熱點資訊') }}
                 v-list-item(:href="greenmap" target="_blank")
-                  v-list-item-title 賞鳥綠地圖
+                  v-list-item-title {{ $t('賞鳥綠地圖') }}
             
         template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
           v-list-item(link :href='google_calendar' target="_blank")
             v-list-item-content
-              v-list-item-title 集合時間
+              v-list-item-title {{ $t('集合地點') }}
               v-list-item-subtitle {{ selectedEvent.starttime }}
             v-list-item-action
               v-icon(color="orange" dark icon ) {{ icons.mdiCalendarPlus }}
           v-list-item(link :href='google_map' target="_blank")
             v-list-item-content
-              v-list-item-title 集合地點
-              v-list-item-subtitle {{ selectedEvent.location }}
-              v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }}
+              v-list-item-title {{ $t('集合地點') }}
+              v-list-item-subtitle {{ $i18n.locale=='en' ? selectedEvent.path.elocation : selectedEvent.location }}
+              v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ selectedEvent.path.bus }}
             v-list-item-action
               v-icon(color="primary" icon ) {{ icons.mdiGoogleMaps }}
         template(v-else)
           v-list-item
             v-list-item-content
-              v-list-item-title 集合時間
+              v-list-item-title {{ $t('集合時間') }}
               v-list-item-subtitle {{ selectedEvent.starttime }}
           v-list-item
             v-list-item-content
-              v-list-item-title 集合地點
-              v-list-item-subtitle {{ selectedEvent.location }}
-              v-list-item-subtitle(v-if="selectedEvent.bus") {{ selectedEvent.bus }}
+              v-list-item-title {{ $t('集合地點') }}
+              v-list-item-subtitle {{ $i18n.locale=='en' ? selectedEvent.path.elocation : selectedEvent.location }}
+              v-list-item-subtitle(v-if="selectedEvent.path.bus") {{ selectedEvent.path.bus }}
         v-list-item
           v-list-item-content
-            v-list-item-title 領隊
+            v-list-item-title {{ $t('領隊') }}
             v-list-item-subtitle {{ selectedEvent.leader.join(' ') }}
         v-list-item(v-if="selectedEvent.memberonly=='y'" link :href="selectedEvent.memberurl")
           v-list-item-content
-            v-list-item-title 報名網址
+            v-list-item-title {{ $t('報名網址') }}
             v-list-item-subtitle(v-if="selectedEvent.memberurl") {{ selectedEvent.memberurl }}
             v-list-item-subtitle(v-else) 尚未開始報名
       //template(v-if="selectedEvent.done==false")
@@ -81,22 +81,22 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
         v-divider
         v-card-actions
           template(v-if="users.length==0")
-            v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) 活動簽到
+            v-btn(link  block :href="google_form('', '', '')" target="_blank" color="green" dark) {{ $t('活動簽到') }}
           template(v-else-if="users.length==1")
-            v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) 活動簽到
+            v-btn(link  block :href="google_form(users[0].name,users[0].tel, users[0].member)" target="_blank" color="green" dark) {{ $t('活動簽到') }}
           template(v-else)
             v-menu(offset-y)
               template(v-slot:activator="{ on, attrs }")
-                v-btn(link  block color="green" dark v-bind="attrs" v-on="on") 活動簽到
+                v-btn(link  block color="green" dark v-bind="attrs" v-on="on") {{ $t('活動簽到') }}
               v-list
                 v-list-item(v-for="user in users" :key="user.name" link :href="google_form(user.name, user.tel, user.member)" target="_blank")
                   v-list-item-title {{ user.name }}
-          v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto" color="primary") 賞鳥記錄
+          v-btn(link v-if="selectedEvent.ebird!=''" block @click="goto" color="primary") {{ $t('賞鳥記錄') }}
       template(v-if="selectedEvent.ebird!=''")
         v-divider
         v-card-actions
           v-spacer
-          v-btn(link block @click="goto(selectedEvent)" color="primary") 賞鳥記錄
+          v-btn(link block @click="goto(selectedEvent)" color="primary") {{ $t('賞鳥記錄') }}
 </template>
 
 <script>
@@ -114,13 +114,12 @@ export default {
       mdiBird,
     },
     users: [],
-    paths: [],
+
     dialog: false,
     sid: '',
   }),
   created() {
     this.users = this.$offlineStorage.get('users') ?? []
-    this.paths = this.$offlineStorage.get('paths') ?? []
   },
 
   computed: {
@@ -138,9 +137,7 @@ export default {
         if (this.newlocation) {
           return 'https://maps.google.com/?q=' + this.selectedEvent.location
         } else {
-          const pluscode = this.paths.find(
-            item => item.name == this.selectedEvent.name
-          ).pluscode
+          const pluscode = this.selectedEvent.path.pluscode
           return 'https://maps.google.com/?q=' + encodeURIComponent(pluscode)
         }
       } else {
@@ -158,10 +155,7 @@ export default {
         )
       const location = this.newlocation
         ? this.selectedEvent.location
-        : encodeURIComponent(
-            this.paths.find(item => item.name == this.selectedEvent.name)
-              .pluscode
-          )
+        : encodeURIComponent(this.selectedEvent.path.pluscode)
 
       return this.isOnline
         ? 'https://calendar.google.com/calendar/render?action=TEMPLATE&dates=' +
@@ -183,22 +177,14 @@ export default {
     },
     ebird_hotspot() {
       const month = this.$moment(this.selectedEvent.date).month() + 1
-      const locid = this.paths.find(
-        item => item.name == this.selectedEvent.name
-      )
-        ? this.paths.find(item => item.name == this.selectedEvent.name)['locid']
-        : ''
+      const locid = this.selectedEvent.path ? this.selectedEvent.path.locid : ''
       return this.isOnline && locid
         ? `https://ebird.org/hotspot/${locid}?m=${month}&yr=all&changeDate=`
         : ''
     },
     greenmap() {
-      const greenmap = this.paths.find(
-        item => item.name == this.selectedEvent.name
-      )
-        ? this.paths.find(item => item.name == this.selectedEvent.name)[
-            'greenmap'
-          ]
+      const greenmap = this.selectedEvent.path
+        ? this.selectedEvent.path.greenmap
         : ''
       return this.isOnline && greenmap ? greenmap : ''
     },

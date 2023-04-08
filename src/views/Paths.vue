@@ -7,9 +7,9 @@ v-main
           v-icon(color="green") {{icons.mdiBird}}
         v-list-item-content
           v-list-item-title
-            | {{ item.name }}            
+            | {{ $i18n.locale=='en' ? item.ename :item.name }}            
           v-list-item-subtitle 
-            | {{ item.location }} 
+            | {{ $i18n.locale=='en' ? item.elocation :item.location }} 
             span.float-right {{ item.starttime}}
           v-list-item-subtitle {{ item.ebirdname }}             
         
