@@ -2,6 +2,9 @@
 v-app
   v-navigation-drawer(app, 
       v-model="drawer",
+      absolute,
+      temporary,
+      :bottom="$i18n.locale=='en'",
       :clipped="$vuetify.breakpoint.lgAndUp")
     v-list( nav )
       v-list-item(:to="{name: '回首頁'}")
@@ -80,7 +83,7 @@ v-app
           v-icon {{ icons.mdiTranslate }}     
         v-list-item-content
           v-list-item-title 中文版
-      v-list-item
+      v-list-item( dense)
         v-list-item-avatar(size="24")
           v-icon {{ icons.mdiBrightness4 }}     
         v-list-item-content
@@ -103,7 +106,8 @@ v-app
 
   v-app-bar(app, 
     color="light-green darken-3", 
-    dense, dark,
+    dense, 
+    dark,
     :clipped-left="$vuetify.breakpoint.lgAndUp")
     v-app-bar-nav-icon(@click.stop="drawer =! drawer")
     v-toolbar-title {{ title }}
