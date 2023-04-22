@@ -46,7 +46,7 @@ v-dialog(v-model='selectedOpen', @click:outside="$emit('close')" )
         template(v-if="selectedEvent.cancel!='y' && selectedEvent.done==false")
           v-list-item(link :href='google_calendar' target="_blank")
             v-list-item-content
-              v-list-item-title {{ $t('集合地點') }}
+              v-list-item-title {{ $t('集合時間') }}
               v-list-item-subtitle {{ selectedEvent.starttime }}
             v-list-item-action
               v-icon(color="orange" dark icon ) {{ icons.mdiCalendarPlus }}
